@@ -15,15 +15,6 @@ class Usuario(db.Model, UserMixin):
     def __repr__(self):
         return f'<Usuario {self.nome} ({self.email})>'
 
-class Fornecedor(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(150), nullable=False)
-    contato = db.Column(db.String(100))
-    endereco = db.Column(db.Text)
-    produtos = db.relationship('Produto', backref='fornecedor', lazy=True)
-
-    def __repr__(self):
-        return f'<Fornecedor {self.nome}>'
 
 class Categoria(db.Model):
     __tablename__ = 'categoria'
@@ -35,12 +26,14 @@ class Categoria(db.Model):
     def __repr__(self):
         return f'<Categoria {self.nome}>'
 
+
 class Unidade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), unique=True, nullable=False)
 
     def __repr__(self):
         return f'<Unidade {self.nome}>'
+
 
 class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,7 +44,6 @@ class Produto(db.Model):
     quantidade_atual = db.Column(db.Float, default=0)
     preco = db.Column(db.Float, nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.id'), nullable=True)
-    fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedor.id'), nullable=True)
     movimentacoes = db.relationship('Movimentacao', backref='produto_movimentacoes', lazy=True)
 
     unidade = db.relationship('Unidade', backref='produtos')  # Relação de Produto com Unidade
@@ -70,6 +62,7 @@ class Produto(db.Model):
         db.session.add(movimentacao)
         self.quantidade_atual += quantidade if tipo == 'entrada' else -quantidade
         db.session.commit()
+
 
 class Movimentacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)

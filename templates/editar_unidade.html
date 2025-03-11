@@ -1,28 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Unidade{% endblock %}
+{% block title %}Editar Unidade - Almoxarifado{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">Editar Unidade de Medida</h4>
-        </div>
-        <div class="card-body">
-          <form method="POST">
-            <div class="mb-3">
-              <label for="nome" class="form-label">Nome da Unidade</label>
-              <input type="text" class="form-control" id="nome" name="nome" value="{{ unidade.nome }}" required>
-            </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-success btn-lg">Salvar Alterações</button>
-            </div>
-          </form>
-        </div>
-      </div>
+  <h3>Editar Unidade</h3>
+  <form method="POST" action="{{ url_for('unidades_bp.editar_unidade', id=unidade.id) }}">
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome da Unidade</label>
+      <input type="text" class="form-control" id="nome" name="nome" value="{{ unidade.nome }}" required>
     </div>
-  </div>
+    <button type="submit" class="btn btn-success">Atualizar</button>
+  </form>
 </div>
 {% endblock %}

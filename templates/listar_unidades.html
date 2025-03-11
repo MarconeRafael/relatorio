@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Unidades - Almoxarifado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h3>Lista de Unidades</h3>
+  <ul>
+    {% for unidade in unidades %}
+      <li>
+        {{ unidade.nome }}
+        <a href="{{ url_for('unidades_bp.editar_unidade', id=unidade.id) }}" class="btn btn-warning btn-sm">Editar</a>
+        <form action="{{ url_for('unidades_bp.excluir_unidade', id=unidade.id) }}" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('unidades_bp.cadastrar_unidade') }}" class="btn btn-primary">Cadastrar Nova Unidade</a>
+</div>
+{% endblock %}
