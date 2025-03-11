@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from models import Produto, Categoria, Unidade, db
 
 # Cria o Blueprint para Produtos
@@ -102,5 +102,4 @@ def deletar_produto(id):
     except Exception as e:
         flash(f'Erro ao remover produto: {str(e)}', 'danger')
         db.session.rollback()
-
     return redirect(url_for('produtos.listar_produtos'))

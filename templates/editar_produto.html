@@ -59,17 +59,6 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                            <select class="form-select" id="fornecedor_id" name="fornecedor_id">
-                                <option value="">Selecione um fornecedor</option>
-                                {% for fornecedor in fornecedores %}
-                                    <option value="{{ fornecedor.id }}" {% if produto.fornecedor_id == fornecedor.id %}selected{% endif %}>
-                                        {{ fornecedor.nome }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg">Salvar Alterações</button>
                         </div>

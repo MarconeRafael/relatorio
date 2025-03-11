@@ -2,93 +2,64 @@
 {% block title %}Dashboard - Almoxarifado{% endblock %}
 
 {% block content %}
-<div class="container">
-  <!-- Seção de Boas-Vindas -->
+<div class="container py-5">
+  <!-- Cabeçalho -->
   <div class="row mb-4">
-    <div class="col">
-      <h1 class="display-4">Bem-vindo ao Sistema de Almoxarifado</h1>
-      <p class="lead">Visão geral e métricas do sistema.</p>
+    <div class="col text-center">
+      <h1 class="display-4 fw-bold">Bem-vindo ao Almoxarifado</h1>
+      <p class="lead text-muted">Visualize métricas e obtenha insights sobre o desempenho do sistema.</p>
     </div>
   </div>
 
-  <!-- Cartões de Estatísticas (clicáveis) -->
+  <!-- Cartões de Estatísticas -->
   <div class="row">
-    <div class="col-md-3 mb-3">
-      <a href="/produtos" class="text-decoration-none">
-        <div class="card text-white bg-info h-100">
-          <div class="card-body">
-            <h5 class="card-title">Total de Produtos</h5>
-            <p class="card-text fs-4">{{ total_produtos }}</p>
+    <!-- Cartão de Produtos -->
+    <div class="col-md-6 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <i class="fas fa-box fa-3x"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Total de Produtos</h5>
+              <p class="card-text fs-3">{{ total_produtos }}</p>
+            </div>
           </div>
         </div>
-      </a>
+      </div>
     </div>
-    <div class="col-md-3 mb-3">
-      <a href="/movimentacoes" class="text-decoration-none">
-        <div class="card text-white bg-success h-100">
-          <div class="card-body">
-            <h5 class="card-title">Movimentações Recentes</h5>
-            <p class="card-text fs-4">{{ total_movimentacoes }}</p>
+
+    <!-- Cartão de Usuários -->
+    <div class="col-md-6 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 bg-gradient-danger text-white" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <i class="fas fa-users fa-3x"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Usuários Ativos</h5>
+              <p class="card-text fs-3">{{ total_usuarios }}</p>
+            </div>
           </div>
         </div>
-      </a>
-    </div>
-    <div class="col-md-3 mb-3">
-      <!-- Caso tenha uma página para gerenciar usuários ativos, ajuste o link -->
-      <a href="/usuarios" class="text-decoration-none">
-        <div class="card text-white bg-danger h-100">
-          <div class="card-body">
-            <h5 class="card-title">Usuários Ativos</h5>
-            <p class="card-text fs-4">{{ total_usuarios }}</p>
-          </div>
-        </div>
-      </a>
+      </div>
     </div>
   </div>
 
-  <!-- Últimas Movimentações -->
-  <div class="row mt-4">
+  <!-- Seção Adicional (exemplo de visão geral) -->
+  <div class="row mt-5">
     <div class="col">
-      <h2>Últimas Movimentações</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-          <thead class="table-dark">
-            <tr>
-              <th>Data</th>
-              <th>Produto</th>
-              <th>Quantidade</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for mov in ultimas_movimentacoes %}
-            <tr class="clickable-row" data-href="/movimentacoes/{{ mov.id }}">
-              <td>{{ mov.data }}</td>
-              <td>{{ mov.produto }}</td>
-              <td>{{ mov.quantidade }}</td>
-              <td>{{ mov.tipo }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Visão Geral</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-0">Aqui você pode visualizar informações gerais do sistema de almoxarifado. Personalize essa área para incluir gráficos, alertas e outras métricas relevantes.</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Script para tornar as linhas da tabela clicáveis -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const rows = document.querySelectorAll(".clickable-row");
-  rows.forEach(row => {
-    row.style.cursor = "pointer";
-    row.addEventListener("click", function() {
-      const href = row.getAttribute("data-href");
-      if (href) {
-        window.location.href = href;
-      }
-    });
-  });
-});
-</script>
 {% endblock %}

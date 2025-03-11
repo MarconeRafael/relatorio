@@ -41,7 +41,6 @@
           <th scope="col">Unidade</th>
           <th scope="col">Quantidade</th>
           <th scope="col">Categoria</th>
-          <th scope="col">Fornecedor</th>
           {% if current_user.is_authenticated %}
             <th scope="col">Ações</th>
           {% endif %}
@@ -57,7 +56,6 @@
           <td>{{ produto.unidade }}</td>
           <td>{{ produto.quantidade_atual }}</td>
           <td>{{ produto.categoria.nome if produto.categoria else '—' }}</td>
-          <td>{{ produto.fornecedor.nome if produto.fornecedor else '—' }}</td>
           {% if current_user.is_authenticated %}
           <td>
             <a href="{{ url_for('produtos.editar_produto', id=produto.id) }}" class="btn btn-sm btn-primary me-1">
