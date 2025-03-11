@@ -10,7 +10,9 @@ from routes.usuarios import usuarios_bp
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from models import Usuario  # Para o user_loader
+from routes.categoria import categoria_bp  # Importação do Blueprint de categorias
 
+# Criação do aplicativo Flask
 app = Flask(__name__)
 
 # Configurações do aplicativo
@@ -42,6 +44,7 @@ app.register_blueprint(produtos_bp, url_prefix="/produtos")
 app.register_blueprint(movimentacoes_bp, url_prefix="/movimentacoes")
 app.register_blueprint(fornecedores_bp, url_prefix="/fornecedores")
 app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
+app.register_blueprint(categoria_bp, url_prefix="/categorias")  # Registro do Blueprint de Categorias
 
 # Rotas principais
 @app.route("/")
@@ -87,8 +90,7 @@ def concluir():
 # Tela de Relatórios
 @app.route("/relatorios")
 def relatorios():
-    data_atual = "2025-02-22"
-    pdf_path = f"data/relatorios/relatorio_completo_{data_atual}.pdf"
+    pdf_path = f"data/relatorios/relatorio_completo.pdf"
     relatorio_pdf = "relatorio_completo_2025-03-05.pdf"
     relatorio_eficiencia_csv = "relatorio_eficiencia_material.csv"
     relatorio_eficiencia_pdf = "relatorio_eficiencia.pdf"

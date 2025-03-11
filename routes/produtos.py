@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import Produto, Fornecedor, db
+from models import Produto, Fornecedor, Categoria, db
 
+# Cria o Blueprint para Produtos
 produtos_bp = Blueprint('produtos', __name__)
 
 # Rota para listar produtos: acessível em /produtos/
@@ -17,8 +18,9 @@ def listar_produtos():
 # Rota para criar um novo produto: acessível em /produtos/novo
 @produtos_bp.route('/novo', methods=['GET', 'POST'])
 def novo_produto():
-    # Consulta os fornecedores cadastrados para exibição no dropdown
+    # Consulta os fornecedores e categorias cadastrados para exibição no dropdown
     fornecedores = Fornecedor.query.all()
+    categorias = Categoria.query.all()  # Adicionando a consulta para categorias
     if request.method == 'POST':
         # Coleta os dados do formulário
         codigo = request.form.get('codigo')
@@ -33,7 +35,7 @@ def novo_produto():
         # Validação simples: somente os campos nome, preco, quantidade e unidade são obrigatórios
         if not nome or not preco or not quantidade or not unidade:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
-            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores)
+            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores, categorias=categorias)
 
         try:
             novo_produto = Produto(
@@ -53,16 +55,17 @@ def novo_produto():
         except Exception as e:
             flash(f'Erro ao adicionar produto: {str(e)}', 'danger')
             db.session.rollback()
-            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores)
+            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores, categorias=categorias)
 
-    # No GET, passa um dicionário vazio para form_data e a lista de fornecedores
-    return render_template('novo_produto.html', form_data={}, fornecedores=fornecedores)
+    # No GET, passa um dicionário vazio para form_data, a lista de fornecedores e categorias
+    return render_template('novo_produto.html', form_data={}, fornecedores=fornecedores, categorias=categorias)
 
 # Rota para editar um produto: acessível em /produtos/editar/<id>
 @produtos_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar_produto(id):
     produto = Produto.query.get_or_404(id)
     fornecedores = Fornecedor.query.all()
+    categorias = Categoria.query.all()  # Adicionando a consulta para categorias
     if request.method == 'POST':
         # Coleta os dados do formulário
         nome = request.form.get('nome')
@@ -76,7 +79,7 @@ def editar_produto(id):
         # Validação simples dos campos obrigatórios
         if not nome or not preco or not quantidade or not unidade:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
-            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores)
+            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores, categorias=categorias)
 
         try:
             produto.nome = nome
@@ -92,9 +95,9 @@ def editar_produto(id):
         except Exception as e:
             flash(f'Erro ao atualizar produto: {str(e)}', 'danger')
             db.session.rollback()
-            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores)
+            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores, categorias=categorias)
 
-    return render_template('editar_produto.html', produto=produto, form_data={}, fornecedores=fornecedores)
+    return render_template('editar_produto.html', produto=produto, form_data={}, fornecedores=fornecedores, categorias=categorias)
 
 # Rota para deletar um produto: acessível em /produtos/deletar/<id>
 @produtos_bp.route('/deletar/<int:id>', methods=['POST'])

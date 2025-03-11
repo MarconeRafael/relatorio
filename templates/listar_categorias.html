@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Lista de Categorias</h4>
+        </div>
+        <div class="card-body">
+          <a href="{{ url_for('categorias_bp.cadastrar_categoria') }}" class="btn btn-primary mb-3">Cadastrar Nova Categoria</a>
+
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for categoria in categorias %}
+                <tr>
+                  <td>{{ categoria.id }}</td>
+                  <td>{{ categoria.nome }}</td>
+                  <td>{{ categoria.descricao }}</td>
+                  <td>
+                    <a href="{{ url_for('categorias_bp.editar_categoria', id=categoria.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="{{ url_for('categorias_bp.deletar_categoria', id=categoria.id) }}" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta categoria?')">Excluir</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

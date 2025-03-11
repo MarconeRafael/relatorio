@@ -28,6 +28,9 @@ class Fornecedor(db.Model):
 
 
 class Categoria(db.Model):
+    __tablename__ = 'categoria'
+    __table_args__ = {'extend_existing': True}  # Permite redefinir a tabela caso ela já exista
+
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.Text)
@@ -47,7 +50,7 @@ class Produto(db.Model):
     preco = db.Column(db.Float, nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.id'), nullable=True)
     fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedor.id'), nullable=True)
-    movimentacoes = db.relationship('Movimentacao', backref='produto_movimentacoes', lazy=True)  # Alterado o backref para evitar conflito
+    movimentacoes = db.relationship('Movimentacao', backref='produto_movimentacoes', lazy=True)
 
     def __repr__(self):
         return f'<Produto {self.nome} (Código: {self.codigo})>'
@@ -74,7 +77,7 @@ class Movimentacao(db.Model):
     observacao = db.Column(db.Text)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)
     usuario = db.relationship('Usuario', backref='movimentacoes', lazy=True)
-    produto = db.relationship('Produto', backref='movimentacoes_relacionadas', lazy=True)  # Alterado o backref para evitar conflito
+    produto = db.relationship('Produto', backref='movimentacoes_relacionadas', lazy=True)
 
     def __repr__(self):
         return f'<Movimentacao {self.tipo} de {self.quantidade} (Produto ID: {self.produto_id})>'

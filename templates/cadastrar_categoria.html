@@ -1,0 +1,20 @@
+<!-- templates/categoria/cadastrar_categoria.html -->
+{% extends "base.html" %}
+
+{% block title %}Cadastrar Categoria{% endblock %}
+
+{% block content %}
+  <h1>Cadastrar Categoria</h1>
+  <form method="POST">
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome da Categoria</label>
+      <input type="text" class="form-control" id="nome" name="nome" required>
+    </div>
+    <div class="mb-3">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Cadastrar</button>
+  </form>
+  <a href="{{ url_for('categorias_bp.listar_categorias') }}" class="btn btn-link mt-3">Voltar para as Categorias</a>
+{% endblock %}

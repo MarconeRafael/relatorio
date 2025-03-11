@@ -61,10 +61,16 @@
                      value="{{ form_data.quantidade if form_data and form_data.quantidade else '' }}">
             </div>
             <div class="mb-3">
-              <label for="categoria_id" class="form-label">Categoria (opcional)</label>
-              <input type="text" class="form-control" id="categoria_id" name="categoria_id"
-                     placeholder="Insira a categoria"
-                     value="{{ form_data.categoria_id if form_data and form_data.categoria_id else '' }}">
+              <label for="categoria_id" class="form-label">Categoria</label>
+              <!-- Seleção da Categoria de Produto -->
+              <select class="form-select" id="categoria_id" name="categoria_id" required>
+                <option value="">Selecione uma categoria</option>
+                {% for categoria in categorias %}
+                  <option value="{{ categoria.id }}" {% if form_data.categoria_id and form_data.categoria_id == categoria.id %}selected{% endif %}>
+                    {{ categoria.nome }}
+                  </option>
+                {% endfor %}
+              </select>
             </div>
             <!-- Novo campo: Seleção de Fornecedor -->
             <div class="mb-3">
@@ -72,11 +78,9 @@
               <select class="form-select" id="fornecedor_id" name="fornecedor_id">
                 <option value="">Selecione um fornecedor</option>
                 {% for fornecedor in fornecedores %}
-                  {% if form_data.fornecedor_id and form_data.fornecedor_id|int == fornecedor.id %}
-                    <option value="{{ fornecedor.id }}" selected>{{ fornecedor.nome }}</option>
-                  {% else %}
-                    <option value="{{ fornecedor.id }}">{{ fornecedor.nome }}</option>
-                  {% endif %}
+                  <option value="{{ fornecedor.id }}" {% if form_data.fornecedor_id and form_data.fornecedor_id == fornecedor.id %}selected{% endif %}>
+                    {{ fornecedor.nome }}
+                  </option>
                 {% endfor %}
               </select>
             </div>
