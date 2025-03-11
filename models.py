@@ -15,7 +15,6 @@ class Usuario(db.Model, UserMixin):
     def __repr__(self):
         return f'<Usuario {self.nome} ({self.email})>'
 
-
 class Fornecedor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(150), nullable=False)
@@ -26,11 +25,8 @@ class Fornecedor(db.Model):
     def __repr__(self):
         return f'<Fornecedor {self.nome}>'
 
-
 class Categoria(db.Model):
     __tablename__ = 'categoria'
-    __table_args__ = {'extend_existing': True}  # Permite redefinir a tabela caso ela já exista
-
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.Text)
@@ -39,18 +35,26 @@ class Categoria(db.Model):
     def __repr__(self):
         return f'<Categoria {self.nome}>'
 
+class Unidade(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Unidade {self.nome}>'
 
 class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     codigo = db.Column(db.String(50), unique=True, nullable=False)
     nome = db.Column(db.String(150), nullable=False)
     descricao = db.Column(db.Text)
-    unidade = db.Column(db.String(20))
+    unidade_id = db.Column(db.Integer, db.ForeignKey('unidade.id'), nullable=False)  # Chave estrangeira para Unidade
     quantidade_atual = db.Column(db.Float, default=0)
     preco = db.Column(db.Float, nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.id'), nullable=True)
     fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedor.id'), nullable=True)
     movimentacoes = db.relationship('Movimentacao', backref='produto_movimentacoes', lazy=True)
+
+    unidade = db.relationship('Unidade', backref='produtos')  # Relação de Produto com Unidade
 
     def __repr__(self):
         return f'<Produto {self.nome} (Código: {self.codigo})>'
@@ -66,7 +70,6 @@ class Produto(db.Model):
         db.session.add(movimentacao)
         self.quantidade_atual += quantidade if tipo == 'entrada' else -quantidade
         db.session.commit()
-
 
 class Movimentacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)

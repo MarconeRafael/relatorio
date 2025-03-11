@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import Produto, Fornecedor, Categoria, db
+from models import Produto, Fornecedor, Categoria, Unidade, db
 
 # Cria o Blueprint para Produtos
 produtos_bp = Blueprint('produtos', __name__)
@@ -12,30 +12,28 @@ def listar_produtos():
         return render_template('produtos.html', produtos=produtos)
     except Exception as e:
         flash(f'Erro ao listar produtos: {str(e)}', 'danger')
-        # Evite redirect loop; renderize a página com uma lista vazia
         return render_template('produtos.html', produtos=[])
 
 # Rota para criar um novo produto: acessível em /produtos/novo
 @produtos_bp.route('/novo', methods=['GET', 'POST'])
 def novo_produto():
-    # Consulta os fornecedores e categorias cadastrados para exibição no dropdown
     fornecedores = Fornecedor.query.all()
-    categorias = Categoria.query.all()  # Adicionando a consulta para categorias
+    categorias = Categoria.query.all()
+    unidades = Unidade.query.all()  # Adicionando a consulta para unidades
+    
     if request.method == 'POST':
-        # Coleta os dados do formulário
         codigo = request.form.get('codigo')
         nome = request.form.get('nome')
         preco = request.form.get('preco')
         quantidade = request.form.get('quantidade')
         descricao = request.form.get('descricao')
-        unidade = request.form.get('unidade')
+        unidade_id = request.form.get('unidade_id')  # Mudança para usar a unidade_id
         categoria_id = request.form.get('categoria_id')
         fornecedor_id = request.form.get('fornecedor_id')
 
-        # Validação simples: somente os campos nome, preco, quantidade e unidade são obrigatórios
-        if not nome or not preco or not quantidade or not unidade:
+        if not nome or not preco or not quantidade or not unidade_id:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
-            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores, categorias=categorias)
+            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores, categorias=categorias, unidades=unidades)
 
         try:
             novo_produto = Produto(
@@ -44,7 +42,7 @@ def novo_produto():
                 preco=preco,
                 quantidade_atual=quantidade,
                 descricao=descricao,
-                unidade=unidade,
+                unidade_id=unidade_id,  # Mudança para usar unidade_id
                 categoria_id=categoria_id,
                 fornecedor_id=fornecedor_id
             )
@@ -55,38 +53,37 @@ def novo_produto():
         except Exception as e:
             flash(f'Erro ao adicionar produto: {str(e)}', 'danger')
             db.session.rollback()
-            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores, categorias=categorias)
+            return render_template('novo_produto.html', form_data=request.form, fornecedores=fornecedores, categorias=categorias, unidades=unidades)
 
-    # No GET, passa um dicionário vazio para form_data, a lista de fornecedores e categorias
-    return render_template('novo_produto.html', form_data={}, fornecedores=fornecedores, categorias=categorias)
+    return render_template('novo_produto.html', form_data={}, fornecedores=fornecedores, categorias=categorias, unidades=unidades)
 
 # Rota para editar um produto: acessível em /produtos/editar/<id>
 @produtos_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar_produto(id):
     produto = Produto.query.get_or_404(id)
     fornecedores = Fornecedor.query.all()
-    categorias = Categoria.query.all()  # Adicionando a consulta para categorias
+    categorias = Categoria.query.all()
+    unidades = Unidade.query.all()  # Adicionando a consulta para unidades
+    
     if request.method == 'POST':
-        # Coleta os dados do formulário
         nome = request.form.get('nome')
         preco = request.form.get('preco')
         quantidade = request.form.get('quantidade')
         descricao = request.form.get('descricao')
-        unidade = request.form.get('unidade')
+        unidade_id = request.form.get('unidade_id')  # Mudança para usar a unidade_id
         categoria_id = request.form.get('categoria_id')
         fornecedor_id = request.form.get('fornecedor_id')
 
-        # Validação simples dos campos obrigatórios
-        if not nome or not preco or not quantidade or not unidade:
+        if not nome or not preco or not quantidade or not unidade_id:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
-            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores, categorias=categorias)
+            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores, categorias=categorias, unidades=unidades)
 
         try:
             produto.nome = nome
             produto.preco = preco
             produto.quantidade_atual = quantidade
             produto.descricao = descricao
-            produto.unidade = unidade
+            produto.unidade_id = unidade_id  # Mudança para usar unidade_id
             produto.categoria_id = categoria_id
             produto.fornecedor_id = fornecedor_id
             db.session.commit()
@@ -95,9 +92,9 @@ def editar_produto(id):
         except Exception as e:
             flash(f'Erro ao atualizar produto: {str(e)}', 'danger')
             db.session.rollback()
-            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores, categorias=categorias)
+            return render_template('editar_produto.html', produto=produto, form_data=request.form, fornecedores=fornecedores, categorias=categorias, unidades=unidades)
 
-    return render_template('editar_produto.html', produto=produto, form_data={}, fornecedores=fornecedores, categorias=categorias)
+    return render_template('editar_produto.html', produto=produto, form_data={}, fornecedores=fornecedores, categorias=categorias, unidades=unidades)
 
 # Rota para deletar um produto: acessível em /produtos/deletar/<id>
 @produtos_bp.route('/deletar/<int:id>', methods=['POST'])

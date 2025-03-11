@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Unidade{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Cadastrar Unidade de Medida</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome da Unidade</label>
+              <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-success btn-lg">Cadastrar Unidade</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

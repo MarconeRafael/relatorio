@@ -1,96 +1,102 @@
-{% extends 'base.html' %}
-{% block title %}Novo Produto - Almoxarifado{% endblock %}
+  {% extends 'base.html' %}
+  {% block title %}Novo Produto - Almoxarifado{% endblock %}
 
-{% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">Cadastrar Novo Produto</h4>
-        </div>
-        <div class="card-body">
-          <!-- Bloco para exibir mensagens flash -->
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endwith %}
+  {% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Cadastrar Novo Produto</h4>
+          </div>
+          <div class="card-body">
+            <!-- Bloco para exibir mensagens flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
 
-          <form method="POST" action="/produtos/novo">
-            <div class="mb-3">
-              <label for="codigo" class="form-label">Código</label>
-              <input type="text" class="form-control" id="codigo" name="codigo"
-                     placeholder="Insira o código do produto"
-                     value="{{ form_data.codigo if form_data and form_data.codigo else '' }}">
-            </div>
-            <div class="mb-3">
-              <label for="nome" class="form-label">Nome</label>
-              <input type="text" class="form-control" id="nome" name="nome"
-                     placeholder="Insira o nome do produto"
-                     value="{{ form_data.nome if form_data and form_data.nome else '' }}" required>
-            </div>
-            <!-- Campo para Preço (Obrigatório) -->
-            <div class="mb-3">
-              <label for="preco" class="form-label">Preço</label>
-              <input type="number" step="any" class="form-control" id="preco" name="preco"
-                     placeholder="Insira o preço do produto"
-                     value="{{ form_data.preco if form_data and form_data.preco else '' }}" required>
-            </div>
-            <div class="mb-3">
-              <label for="descricao" class="form-label">Descrição</label>
-              <textarea class="form-control" id="descricao" name="descricao" rows="3"
-                        placeholder="Descreva o produto">{{ form_data.descricao if form_data and form_data.descricao else '' }}</textarea>
-            </div>
-            <div class="mb-3">
-              <label for="unidade" class="form-label">Unidade</label>
-              <input type="text" class="form-control" id="unidade" name="unidade"
-                     placeholder="Ex: unidade, kg, litro"
-                     value="{{ form_data.unidade if form_data and form_data.unidade else '' }}">
-            </div>
-            <!-- Campo de Quantidade não obrigatório -->
-            <div class="mb-3">
-              <label for="quantidade" class="form-label">Quantidade Atual</label>
-              <input type="number" step="any" class="form-control" id="quantidade" name="quantidade"
-                     placeholder="Quantidade atual em estoque"
-                     value="{{ form_data.quantidade if form_data and form_data.quantidade else '' }}">
-            </div>
-            <div class="mb-3">
-              <label for="categoria_id" class="form-label">Categoria</label>
-              <!-- Seleção da Categoria de Produto -->
-              <select class="form-select" id="categoria_id" name="categoria_id" required>
-                <option value="">Selecione uma categoria</option>
-                {% for categoria in categorias %}
-                  <option value="{{ categoria.id }}" {% if form_data.categoria_id and form_data.categoria_id == categoria.id %}selected{% endif %}>
-                    {{ categoria.nome }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-            <!-- Novo campo: Seleção de Fornecedor -->
-            <div class="mb-3">
-              <label for="fornecedor_id" class="form-label">Fornecedor (opcional)</label>
-              <select class="form-select" id="fornecedor_id" name="fornecedor_id">
-                <option value="">Selecione um fornecedor</option>
-                {% for fornecedor in fornecedores %}
-                  <option value="{{ fornecedor.id }}" {% if form_data.fornecedor_id and form_data.fornecedor_id == fornecedor.id %}selected{% endif %}>
-                    {{ fornecedor.nome }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-success btn-lg">Cadastrar Produto</button>
-            </div>
-          </form>
+            <form method="POST" action="/produtos/novo">
+              <div class="mb-3">
+                <label for="codigo" class="form-label">Código</label>
+                <input type="text" class="form-control" id="codigo" name="codigo"
+                      placeholder="Insira o código do produto"
+                      value="{{ form_data.codigo if form_data and form_data.codigo else '' }}">
+              </div>
+              <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome"
+                      placeholder="Insira o nome do produto"
+                      value="{{ form_data.nome if form_data and form_data.nome else '' }}" required>
+              </div>
+              <!-- Campo para Preço (Obrigatório) -->
+              <div class="mb-3">
+                <label for="preco" class="form-label">Preço</label>
+                <input type="number" step="any" class="form-control" id="preco" name="preco"
+                      placeholder="Insira o preço do produto"
+                      value="{{ form_data.preco if form_data and form_data.preco else '' }}" required>
+              </div>
+              <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3"
+                          placeholder="Descreva o produto">{{ form_data.descricao if form_data and form_data.descricao else '' }}</textarea>
+              </div>
+              <div class="mb-3">
+                <label for="unidade_id" class="form-label">Unidade</label>
+                <select class="form-select" id="unidade_id" name="unidade_id" required>
+                  <option value="">Selecione uma unidade</option>
+                  {% for unidade in unidades %}
+                    <option value="{{ unidade.id }}" {% if form_data.unidade_id and form_data.unidade_id == unidade.id %}selected{% endif %}>
+                      {{ unidade.nome }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              
+              <!-- Campo de Quantidade não obrigatório -->
+              <div class="mb-3">
+                <label for="quantidade" class="form-label">Quantidade Atual</label>
+                <input type="number" step="any" class="form-control" id="quantidade" name="quantidade"
+                      placeholder="Quantidade atual em estoque"
+                      value="{{ form_data.quantidade if form_data and form_data.quantidade else '' }}">
+              </div>
+              <div class="mb-3">
+                <label for="categoria_id" class="form-label">Categoria</label>
+                <!-- Seleção da Categoria de Produto -->
+                <select class="form-select" id="categoria_id" name="categoria_id" required>
+                  <option value="">Selecione uma categoria</option>
+                  {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if form_data.categoria_id and form_data.categoria_id == categoria.id %}selected{% endif %}>
+                      {{ categoria.nome }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <!-- Novo campo: Seleção de Fornecedor -->
+              <div class="mb-3">
+                <label for="fornecedor_id" class="form-label">Fornecedor (opcional)</label>
+                <select class="form-select" id="fornecedor_id" name="fornecedor_id">
+                  <option value="">Selecione um fornecedor</option>
+                  {% for fornecedor in fornecedores %}
+                    <option value="{{ fornecedor.id }}" {% if form_data.fornecedor_id and form_data.fornecedor_id == fornecedor.id %}selected{% endif %}>
+                      {{ fornecedor.nome }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success btn-lg">Cadastrar Produto</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %}
