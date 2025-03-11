@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Editar Fornecedor - Almoxarifado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Editar Fornecedor</h4>
+        </div>
+        <div class="card-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          <form method="POST" action="{{ url_for('fornecedores.editar_fornecedor', id=fornecedor.id) }}">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="nome" name="nome" placeholder="Insira o nome do fornecedor"
+                     value="{{ form_data.nome if form_data and form_data.nome else fornecedor.nome }}" required>
+            </div>
+            <div class="mb-3">
+              <label for="contato" class="form-label">Contato</label>
+              <input type="text" class="form-control" id="contato" name="contato" placeholder="Telefone ou e-mail"
+                     value="{{ form_data.contato if form_data and form_data.contato else fornecedor.contato }}">
+            </div>
+            <div class="mb-3">
+              <label for="endereco" class="form-label">Endereço</label>
+              <textarea class="form-control" id="endereco" name="endereco" rows="3" placeholder="Insira o endereço do fornecedor">{{ form_data.endereco if form_data and form_data.endereco else fornecedor.endereco }}</textarea>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-success btn-lg">Atualizar Fornecedor</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

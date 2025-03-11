@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Login - Almoxarifado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <!-- Bloco para exibir mensagens flash -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          <h2 class="card-title text-center mb-4">Acesse sua Conta</h2>
+          <form method="POST" action="/usuarios/login">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome" required>
+            </div>
+            <div class="mb-3">
+              <label for="senha" class="form-label">Senha</label>
+              <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" required>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+            </div>
+          </form>
+          <hr>
+          <div class="text-center">
+            <p class="mb-0">Não tem uma conta?</p>
+            <a href="/usuarios/cadastrar" class="btn btn-outline-secondary mt-2">Cadastre-se</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+Flask
+openai==0.28
+reportlab
+pandas
+matplotlib
+seaborn
+gunicorn
+Flask-SQLAlchemy
+Flask-Login
