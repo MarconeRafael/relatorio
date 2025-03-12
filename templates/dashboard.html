@@ -17,8 +17,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Total de Produtos</th>
+                            <th>Quantidade Mínima</th>
+                            <th>Quantidade em estoque</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -26,7 +26,7 @@
                             <tr>
                                 <td>{{ categoria.id }}</td>
                                 <td>{{ categoria.nome }}</td>
-                                <td>{{ categoria.descricao }}</td>
+                                <td>{{ categoria.quantidade_minima }}</td>
                                 <td>
                                     <span class="badge bg-success">
                                         <i class="bi bi-box-seam"></i> {{ categoria.total_produtos }}

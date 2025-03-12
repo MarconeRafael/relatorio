@@ -39,7 +39,7 @@
               <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Nome</th>
-                <th scope="col">Descrição</th>
+                <th scope="col">Quantidade Mínima</th>
                 <th scope="col" class="text-center">Ações</th>
               </tr>
             </thead>
@@ -48,7 +48,7 @@
                 <tr>
                   <td>{{ categoria.id }}</td>
                   <td>{{ categoria.nome }}</td>
-                  <td>{{ categoria.descricao }}</td>
+                  <td>{{ "%.2f"|format(categoria.quantidade_minima) }}</td>
                   <td class="text-center">
                     <a href="{{ url_for('categorias_bp.editar_categoria', id=categoria.id) }}" class="btn btn-warning btn-sm me-1" style="background-color: #ffc107; color: white;">
                       <i class="fas fa-edit"></i> Editar

@@ -1,5 +1,3 @@
-# routes/categoria.py
-
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import db, Categoria
 
@@ -11,14 +9,14 @@ categoria_bp = Blueprint('categorias_bp', __name__)
 def cadastrar_categoria():
     if request.method == "POST":
         nome = request.form.get("nome")
-        descricao = request.form.get("descricao")
+        quantidade_minima = request.form.get("quantidade_minima")
         
         if not nome:
             flash("Nome da categoria é obrigatório!", "danger")
             return redirect(url_for('categorias_bp.cadastrar_categoria'))
         
         # Criar nova categoria
-        nova_categoria = Categoria(nome=nome, descricao=descricao)
+        nova_categoria = Categoria(nome=nome, quantidade_minima=quantidade_minima)
         
         # Adiciona ao banco de dados
         db.session.add(nova_categoria)
@@ -44,14 +42,14 @@ def editar_categoria(id):
     
     if request.method == 'POST':
         nome = request.form.get("nome")
-        descricao = request.form.get("descricao")
+        quantidade_minima = request.form.get("quantidade_minima")
         
         if not nome:
             flash("Nome da categoria é obrigatório!", "danger")
             return render_template("editar_categoria.html", categoria=categoria)
         
         categoria.nome = nome
-        categoria.descricao = descricao
+        categoria.quantidade_minima = quantidade_minima
         db.session.commit()
         
         flash("Categoria atualizada com sucesso!", "success")

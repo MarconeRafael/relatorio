@@ -1,16 +1,36 @@
 from flask import Blueprint, render_template
-from models import Categoria
-
+from models import Categoria, db
+from encaminhar_contato import enviar_email  # Importe sua função de envio de e-mail
+from keys import senha_, email_
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route("/dashboard")
 def dashboard():
     categorias = Categoria.query.all()
+    
+    for categoria in categorias:
+        total_produtos = categoria.contar_produtos()
+        if total_produtos <= categoria.quantidade_minima:
+            if not categoria.notificado:
+                enviar_email(
+                    email_para=email_,
+                    nome=categoria.nome,
+                    email_de="mbteste518@gmail.com",
+                    senha=senha_,
+                    corpo_email=f"<p>O estoque da categoria {categoria.nome} está acabando. Quantidade atual: {total_produtos} e quantidade mínima: {categoria.quantidade_minima}.</p>"
+                )
+                categoria.notificado = True
+                db.session.commit()
+        else:
+            if categoria.notificado:
+                categoria.notificado = False
+                db.session.commit()
+
     categorias_com_produtos = [
         {
             "id": categoria.id,
             "nome": categoria.nome,
-            "descricao": categoria.descricao or "Sem descrição",
+            "quantidade_minima": categoria.quantidade_minima,
             "total_produtos": categoria.contar_produtos()
         }
         for categoria in categorias

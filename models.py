@@ -18,15 +18,16 @@ class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    descricao = db.Column(db.Text)
+    quantidade_minima = db.Column(db.Float, default=0)
+    notificado = db.Column(db.Boolean, default=False)  # Adicione essa linha
     produtos = db.relationship('Produto', back_populates='categoria', lazy='dynamic')
 
     def contar_produtos(self):
-        """Retorna a soma das quantidades dos produtos pertencentes a esta categoria."""
         return sum(produto.quantidade_atual for produto in self.produtos)
 
     def __repr__(self):
         return f'<Categoria {self.nome}>'
+
 
 class Unidade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
