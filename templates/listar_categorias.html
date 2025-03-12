@@ -1,25 +1,46 @@
 {% extends 'base.html' %}
 
-{% block title %}Categorias{% endblock %}
+{% block title %}Categorias - Almoxarifado{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container-fluid p-0 mt-5">
+  <!-- Cabeçalho -->
+  <div class="row mb-4 mx-0">
+    <div class="col">
+      <h2 class="text-uppercase fw-bold text-primary">Lista de Categorias</h2>
+    </div>
+  </div>
+
+  <!-- Mensagens Flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Lista de Categorias -->
   <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">Lista de Categorias</h4>
+    <div class="col-md-10">
+      <div class="card shadow-sm rounded">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Categorias</h4>
+          <a href="{{ url_for('categorias_bp.cadastrar_categoria') }}" class="btn btn-success btn-sm">
+            <i class="fas fa-plus me-2"></i>Nova Categoria
+          </a>
         </div>
         <div class="card-body">
-          <a href="{{ url_for('categorias_bp.cadastrar_categoria') }}" class="btn btn-primary mb-3">Cadastrar Nova Categoria</a>
-
-          <table class="table table-bordered">
-            <thead>
+          <table class="table table-hover table-bordered align-middle">
+            <thead class="table-primary">
               <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Ações</th>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Descrição</th>
+                <th scope="col" class="text-center">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -28,10 +49,14 @@
                   <td>{{ categoria.id }}</td>
                   <td>{{ categoria.nome }}</td>
                   <td>{{ categoria.descricao }}</td>
-                  <td>
-                    <a href="{{ url_for('categorias_bp.editar_categoria', id=categoria.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                  <td class="text-center">
+                    <a href="{{ url_for('categorias_bp.editar_categoria', id=categoria.id) }}" class="btn btn-warning btn-sm me-1" style="background-color: #ffc107; color: white;">
+                      <i class="fas fa-edit"></i> Editar
+                    </a>
                     <form action="{{ url_for('categorias_bp.deletar_categoria', id=categoria.id) }}" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta categoria?')">Excluir</button>
+                      <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; color: white;" onclick="return confirm('Tem certeza que deseja excluir esta categoria?')">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                      </button>
                     </form>
                   </td>
                 </tr>
@@ -43,4 +68,61 @@
     </div>
   </div>
 </div>
+
+<!-- Estilos Adicionais -->
+<style>
+  .container-fluid.p-0 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .mx-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .card {
+    border-radius: 0.75rem;
+  }
+
+  .card-header {
+    font-size: 1.2rem;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .table-primary {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .btn-sm {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    color: white;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .btn:hover {
+    transform: scale(1.05);
+  }
+
+  .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .text-primary {
+    color: #007bff !important;
+  }
+</style>
 {% endblock %}

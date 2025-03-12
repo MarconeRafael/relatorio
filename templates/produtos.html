@@ -2,11 +2,11 @@
 {% block title %}Produtos - Almoxarifado{% endblock %}
 
 {% block content %}
-<div class="container-fluid p-0 mt-5">
+<div class="container mt-5">
   <!-- Cabeçalho -->
-  <div class="row mb-4 mx-0">
-    <div class="col">
-      <h2 class="text-uppercase fw-bold text-primary">Lista de Produtos</h2>
+  <div class="row justify-content-between align-items-center mb-4">
+    <div class="col-auto">
+      <h4 class="text-uppercase fw-bold text-primary">Lista de Produtos</h4>
     </div>
     <div class="col-auto">
       {% if current_user.is_authenticated %}
@@ -21,7 +21,7 @@
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -30,78 +30,103 @@
   {% endwith %}
 
   <!-- Tabela de Produtos -->
-  <div class="table-responsive shadow-sm rounded">
-    <table class="table table-hover table-bordered align-middle" style="width: 100%;">
-      <thead class="bg-dark text-light">
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Nome</th>
-          <th scope="col">Descrição</th>
-          <th scope="col">Unidade</th>
-          <th scope="col">Quantidade</th>
-          <th scope="col">Categoria</th>
-          {% if current_user.is_authenticated %}
-            <th scope="col">Ações</th>
-          {% endif %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for produto in produtos %}
-        <tr>
-          <td>{{ produto.id }}</td>
-          <td>{{ produto.nome }}</td>
-          <td>{{ produto.descricao }}</td>
-          <td>{{ produto.unidade }}</td>
-          <td>{{ produto.quantidade_atual }}</td>
-          <td>{{ produto.categoria.nome if produto.categoria else '—' }}</td>
-          {% if current_user.is_authenticated %}
-          <td>
-            <a href="{{ url_for('produtos.editar_produto', id=produto.id) }}" class="btn btn-sm btn-primary me-1">
-              <i class="fas fa-edit"></i> Editar
-            </a>
-            <form action="{{ url_for('produtos.deletar_produto', id=produto.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
-              <button type="submit" class="btn btn-sm btn-danger">
-                <i class="fas fa-trash-alt"></i> Excluir
-              </button>
-            </form>
-          </td>
-          {% endif %}
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Produtos Cadastrados</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle mb-0">
+          <thead class="bg-primary text-white">
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Unidade</th>
+              <th>Quantidade</th>
+              <th>Categoria</th>
+              {% if current_user.is_authenticated %}
+                <th>Ações</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for produto in produtos %}
+            <tr>
+              <td>{{ produto.id }}</td>
+              <td>{{ produto.nome }}</td>
+              <td>{{ produto.descricao }}</td>
+              <td>{{ produto.unidade }}</td>
+              <td>
+                <span class="badge bg-success">{{ produto.quantidade_atual }}</span>
+              </td>
+              <td>{{ produto.categoria.nome if produto.categoria else '—' }}</td>
+              {% if current_user.is_authenticated %}
+              <td>
+                <a href="{{ url_for('produtos.editar_produto', id=produto.id) }}" class="btn btn-sm btn-warning me-1 shadow-sm">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+                <form action="{{ url_for('produtos.deletar_produto', id=produto.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                  <button type="submit" class="btn btn-sm btn-danger shadow-sm">
+                    <i class="fas fa-trash-alt"></i> Excluir
+                  </button>
+                </form>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Estilos Adicionais -->
 <style>
-  /* Remove espaçamento horizontal do container-fluid */
-  .container-fluid.p-0 {
-    padding-left: 0;
-    padding-right: 0;
+  .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   }
-  /* Remove margem horizontal dos rows */
-  .mx-0 {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-  .table-responsive {
-    width: 100%;
-  }
-  .table {
-    font-size: 1.1rem;
-  }
-  .table th, .table td {
-    padding: 1rem;
-  }
-  .table-hover tbody tr:hover {
-    background-color: #f8f9fa;
-  }
-  .btn {
-    transition: transform 0.2s ease;
-  }
+
   .btn:hover {
     transform: scale(1.05);
+  }
+
+  .btn-primary, .bg-primary {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .text-primary {
+    color: #007bff !important;
+  }
+
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .table th, .table td {
+    vertical-align: middle;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #f8f9fa;
   }
 </style>
 {% endblock %}

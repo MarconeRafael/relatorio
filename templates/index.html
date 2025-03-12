@@ -1,33 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1 class="text-center">Gravar Áudio para Relatórios</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">🎙️ Gravar Áudio para Relatórios</h1>
     
     <!-- Botões para gravação dos áudios de Início e Fim -->
     <div class="d-flex justify-content-center gap-3 mb-4">
-        <button id="btnGravarInicio" class="btn btn-success btn-lg">Gravar Início</button>
-        <button id="btnGravarFim" class="btn btn-success btn-lg">Gravar Fim</button>
+        <button id="btnGravarInicio" class="btn btn-outline-success btn-lg px-4 py-3">
+            ▶️ Gravar Início
+        </button>
+        <button id="btnGravarFim" class="btn btn-outline-success btn-lg px-4 py-3">
+            ▶️ Gravar Fim
+        </button>
     </div>
     
     <!-- Área para exibir e editar as transcrições -->
     <div id="transcricoes">
-        <div class="mb-3">
-            <label for="textoTranscricaoInicio" class="form-label"><strong>Gravação do Início</strong></label>
-            <textarea id="textoTranscricaoInicio" class="form-control" rows="5" placeholder="Transcrição do áudio de início..."></textarea>
+        <div class="mb-4">
+            <label for="textoTranscricaoInicio" class="form-label fs-5"><strong>📝 Gravação do Início</strong></label>
+            <textarea id="textoTranscricaoInicio" class="form-control shadow-sm p-3 rounded-3" rows="5" placeholder="Transcrição do áudio de início..."></textarea>
         </div>
-        <div class="mb-3">
-            <label for="textoTranscricaoFim" class="form-label"><strong>Gravação do Fim</strong></label>
-            <textarea id="textoTranscricaoFim" class="form-control" rows="5" placeholder="Transcrição do áudio de fim..."></textarea>
+        <div class="mb-4">
+            <label for="textoTranscricaoFim" class="form-label fs-5"><strong>📝 Gravação do Fim</strong></label>
+            <textarea id="textoTranscricaoFim" class="form-control shadow-sm p-3 rounded-3" rows="5" placeholder="Transcrição do áudio de fim..."></textarea>
         </div>
+        
         <!-- Botão Concluir para finalizar a edição -->
-        <button id="btnConcluir" class="btn btn-primary">Concluir</button>
+        <div class="d-flex justify-content-center">
+            <button id="btnConcluir" class="btn btn-primary btn-lg px-5 py-3">✅ Concluir</button>
+        </div>
     </div>
     
-    <!-- Botões para navegar para Relatórios e Gráficos -->
-    <div id="navegacao" class="mt-4 d-flex justify-content-between">
-        <a href="{{ url_for('relatorios') }}" class="btn btn-primary">Ver Relatórios</a>
-        <a href="{{ url_for('graficos') }}" class="btn btn-primary">Ver Gráficos</a>
+    <!-- Botões para navegação -->
+    <div id="navegacao" class="mt-5 d-flex justify-content-between">
+        <a href="{{ url_for('relatorios') }}" class="btn btn-outline-primary">📊 Ver Relatórios</a>
+        <a href="{{ url_for('graficos') }}" class="btn btn-outline-primary">📈 Ver Gráficos</a>
     </div>
 </div>
 
@@ -54,11 +61,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            if (data.transcricao) {
-                callback(data.transcricao);
-            } else {
-                callback("Erro na transcrição");
-            }
+            callback(data.transcricao || "Erro na transcrição");
         })
         .catch(error => {
             console.error("Erro:", error);
@@ -73,36 +76,24 @@
 
         currentRecording = type;
 
-        if (type === 'inicio') {
-            btnGravarInicio.classList.remove('btn-success');
-            btnGravarInicio.classList.add('btn-danger');
-            btnGravarInicio.textContent = "Gravando Início...";
-            textoTranscricaoInicio.placeholder = "Gravando áudio de início...";
-        } else if (type === 'fim') {
-            btnGravarFim.classList.remove('btn-success');
-            btnGravarFim.classList.add('btn-danger');
-            btnGravarFim.textContent = "Gravando Fim...";
-            textoTranscricaoFim.placeholder = "Gravando áudio de fim...";
-        }
+        const btn = type === 'inicio' ? btnGravarInicio : btnGravarFim;
+        btn.classList.remove('btn-outline-success');
+        btn.classList.add('btn-outline-danger');
+        btn.textContent = "🔴 Gravando...";
 
-        // Chama a função de gravação do recorder.js
         recorder.start();
     }
 
     function stopRecording(type) {
         recorder.stop().then(blob => {
             uploadAndGetTranscription(type, blob, function(transcricaoRecebida) {
-                if (type === 'inicio') {
-                    textoTranscricaoInicio.value = transcricaoRecebida;
-                    btnGravarInicio.classList.remove('btn-danger');
-                    btnGravarInicio.classList.add('btn-success');
-                    btnGravarInicio.textContent = "Gravar Início";
-                } else if (type === 'fim') {
-                    textoTranscricaoFim.value = transcricaoRecebida;
-                    btnGravarFim.classList.remove('btn-danger');
-                    btnGravarFim.classList.add('btn-success');
-                    btnGravarFim.textContent = "Gravar Fim";
-                }
+                const textarea = type === 'inicio' ? textoTranscricaoInicio : textoTranscricaoFim;
+                const btn = type === 'inicio' ? btnGravarInicio : btnGravarFim;
+
+                textarea.value = transcricaoRecebida;
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-outline-success');
+                btn.textContent = type === 'inicio' ? "▶️ Gravar Início" : "▶️ Gravar Fim";
             });
         }).catch(err => {
             console.error("Erro ao parar a gravação:", err);

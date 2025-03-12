@@ -3,19 +3,110 @@
 {% block title %}Unidades - Almoxarifado{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h3>Lista de Unidades</h3>
-  <ul>
-    {% for unidade in unidades %}
-      <li>
-        {{ unidade.nome }}
-        <a href="{{ url_for('unidades_bp.editar_unidade', id=unidade.id) }}" class="btn btn-warning btn-sm">Editar</a>
-        <form action="{{ url_for('unidades_bp.excluir_unidade', id=unidade.id) }}" method="POST" style="display:inline;">
-          <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-        </form>
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{{ url_for('unidades_bp.cadastrar_unidade') }}" class="btn btn-primary">Cadastrar Nova Unidade</a>
+<div class="container-fluid p-0 mt-5">
+  <!-- Cabeçalho -->
+  <div class="row mb-4 mx-0">
+    <div class="col">
+      <h2 class="text-uppercase fw-bold text-primary">Lista de Unidades</h2>
+    </div>
+  </div>
+
+  <!-- Mensagens Flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Lista de Unidades -->
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow-sm rounded">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Unidades</h4>
+          <a href="{{ url_for('unidades_bp.cadastrar_unidade') }}" class="btn btn-success btn-sm">
+            <i class="fas fa-plus me-2"></i>Nova Unidade
+          </a>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            {% for unidade in unidades %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ unidade.nome }}</span>
+                <div>
+                  <a href="{{ url_for('unidades_bp.editar_unidade', id=unidade.id) }}" class="btn btn-warning btn-sm me-1" style="background-color: #ffc107; color: white;">
+                    <i class="fas fa-edit"></i> Editar
+                  </a>
+                  <form action="{{ url_for('unidades_bp.excluir_unidade', id=unidade.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; color: white;" onclick="return confirm('Tem certeza que deseja excluir esta unidade?')">
+                      <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                  </form>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Estilos Adicionais -->
+<style>
+  .container-fluid.p-0 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .mx-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .card {
+    border-radius: 0.75rem;
+  }
+
+  .card-header {
+    font-size: 1.2rem;
+  }
+
+  .list-group-item {
+    border: none;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .btn-sm {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    color: white;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .btn:hover {
+    transform: scale(1.05);
+  }
+
+  .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .text-primary {
+    color: #007bff !important;
+  }
+</style>
 {% endblock %}

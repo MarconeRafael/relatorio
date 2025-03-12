@@ -15,7 +15,7 @@
   <style>
     /* Global Styles */
     body {
-      background: #f8f9fa;
+      background: #f4f7fa;
       color: #343a40;
       font-family: 'Roboto', sans-serif;
       margin: 0;
@@ -24,6 +24,7 @@
     a {
       color: #007bff;
       text-decoration: none;
+      transition: color 0.3s ease;
     }
     a:hover {
       text-decoration: underline;
@@ -31,56 +32,66 @@
     }
     /* Navbar styles */
     .navbar {
-      background-color: #ffffff;
-      border-bottom: 1px solid #dee2e6;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .navbar-brand {
       font-weight: 700;
       font-size: 2rem;
-      color: #007bff !important;
+      color: #ffffff !important;
     }
     .navbar-nav .nav-link {
-      color: #343a40 !important;
+      color: #ffffff !important;
       margin-right: 1rem;
-      font-size: 1rem;
-      transition: color 0.3s;
+      font-size: 1.1rem;
+      transition: transform 0.2s ease;
     }
     .navbar-nav .nav-link:hover {
-      color: #0056b3 !important;
+      transform: scale(1.05);
+      color: #dfe9f3 !important;
+    }
+    /* Button styles */
+    .btn-custom {
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .btn-custom:hover {
+      background-color: #0056b3;
+      color: #f4f7fa;
     }
     /* Main content styling */
     main {
       padding: 2rem 1rem;
       min-height: 80vh;
     }
-    /* Responsive container - aumentando proporções em telas maiores */
+    /* Responsive container */
     .container {
       width: 100%;
-      max-width: 1400px;
+      max-width: 1200px;
       margin: auto;
     }
     /* Footer styles */
     footer {
-      background: #ffffff;
+      background: #343a40;
       padding: 1.5rem 1rem;
       text-align: center;
-      border-top: 1px solid #dee2e6;
-      width: 100%;
+      color: #dfe9f3;
       margin-top: 2rem;
+      border-top: 2px solid #0056b3;
     }
     footer p {
       margin: 0;
-      color: #6c757d;
       font-size: 0.9rem;
     }
-    /* Media Queries para responsividade */
+    /* Media Queries */
     @media (max-width: 768px) {
       .navbar-brand {
         font-size: 1.75rem;
       }
       .navbar-nav .nav-link {
-        font-size: 0.9rem;
+        font-size: 1rem;
         margin-right: 0.5rem;
       }
       main {
@@ -91,9 +102,9 @@
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light">
+  <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Almoxarifado</a>
+      <a class="navbar-brand" href="/"><i class="fa-solid fa-warehouse"></i> Almoxarifado</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -101,17 +112,17 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         {% if current_user.is_authenticated %}
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">Relatórios</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/produtos">Produtos</a></li>
-          <li class="nav-item"><a class="nav-link" href="/categorias/listar">Categorias</a></li>
-          <li class="nav-item"><a class="nav-link" href="/unidades">Unidades</a></li>
-          <li class="nav-item"><a class="nav-link" href="/usuarios/logout">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="/"><i class="fa-solid fa-chart-line"></i> Relatórios</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fa-solid fa-boxes-stacked"></i> Estoque</a></li>
+          <li class="nav-item"><a class="nav-link" href="/produtos"><i class="fa-solid fa-box"></i> Produtos</a></li>
+          <li class="nav-item"><a class="nav-link" href="/categorias/listar"><i class="fa-solid fa-tags"></i> Categorias</a></li>
+          <li class="nav-item"><a class="nav-link" href="/unidades"><i class="fa-solid fa-ruler-combined"></i> Unidades de medida</a></li>
+          <li class="nav-item"><a class="nav-link" href="/usuarios/logout"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
         </ul>
         {% else %}
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">Relatórios</a></li>
-          <li class="nav-item"><a class="nav-link" href="/usuarios/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/"><i class="fa-solid fa-chart-line"></i> Relatórios</a></li>
+          <li class="nav-item"><a class="nav-link" href="/usuarios/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a></li>
         </ul>
         {% endif %}
       </div>
