@@ -24,12 +24,6 @@
 
           <form method="POST" action="/produtos/novo">
             <div class="mb-3">
-              <label for="codigo" class="form-label">Código</label>
-              <input type="text" class="form-control" id="codigo" name="codigo"
-                     placeholder="Insira o código do produto"
-                     value="{{ form_data.codigo if form_data and form_data.codigo else '' }}">
-            </div>
-            <div class="mb-3">
               <label for="nome" class="form-label">Nome</label>
               <input type="text" class="form-control" id="nome" name="nome"
                      placeholder="Insira o nome do produto"

@@ -37,7 +37,6 @@ class Unidade(db.Model):
 
 class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    codigo = db.Column(db.String(50), unique=True, nullable=False)
     nome = db.Column(db.String(150), nullable=False)
     descricao = db.Column(db.Text)
     unidade_id = db.Column(db.Integer, db.ForeignKey('unidade.id'), nullable=False)

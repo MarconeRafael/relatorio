@@ -13,9 +13,9 @@ def listar_produtos():
         # Obter a contagem de produtos por categoria
         contagem_por_categoria = {categoria.id: categoria.contar_produtos() for categoria in categorias}
         return render_template(
-            'produtos.html', 
-            produtos=produtos, 
-            categorias=categorias, 
+            'produtos.html',
+            produtos=produtos,
+            categorias=categorias,
             contagem_por_categoria=contagem_por_categoria
         )
     except Exception as e:
@@ -26,14 +26,13 @@ def listar_produtos():
 @produtos_bp.route('/novo', methods=['GET', 'POST'])
 def novo_produto():
     categorias = Categoria.query.all()
-    unidades = Unidade.query.all()  # Consulta para unidades
+    unidades = Unidade.query.all()
     if request.method == 'POST':
-        codigo = request.form.get('codigo')
         nome = request.form.get('nome')
         preco = request.form.get('preco')
         quantidade = request.form.get('quantidade')
         descricao = request.form.get('descricao')
-        unidade_id = request.form.get('unidade_id')  # Usando unidade_id
+        unidade_id = request.form.get('unidade_id')
         categoria_id = request.form.get('categoria_id')
 
         # Validação simples: nome, preco, quantidade e unidade são obrigatórios
@@ -43,7 +42,6 @@ def novo_produto():
 
         try:
             novo_produto = Produto(
-                codigo=codigo,
                 nome=nome,
                 preco=preco,
                 quantidade_atual=quantidade,
