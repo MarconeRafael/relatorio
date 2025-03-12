@@ -1,303 +1,126 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gravação e Transcrição</title>
-  <!-- Inclusão do Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Seu CSS personalizado -->
-  <style>
-    /* Estilo para os links de navegação */
-    .navbar-nav .nav-item .nav-link {
-      font-size: 16px;
-      font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 5px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
+{% extends "base.html" %}
 
-    .navbar-nav .nav-item .nav-link:hover {
-      background-color: #0056b3;
-      color: #fff;
-    }
-
-    /* Estilo do botão Almoxarifado */
-    .btn-almoxarifado {
-      background-color: #17a2b8; /* Cor de fundo igual ao bg-info */
-      color: white;
-      font-size: 18px;
-      font-weight: 600;
-      border-radius: 10px;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      width: 100%;
-      height: 100%;
-    }
-
-    .btn-almoxarifado:hover {
-      background-color: #138496; /* Cor um pouco mais escura para o hover */
-      transform: scale(1.05);
-    }
-
-    .btn-almoxarifado .card-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .btn-almoxarifado .card-text {
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    /* Estilo para os botões */
-    .btn {
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 5px;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-    }
-
-    .btn-success {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
-
-    .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #0056b3;
-    }
-
-    .btn-lg {
-      padding: 15px 30px;
-      font-size: 18px;
-    }
-
-    /* Navbar e suas alterações */
-    .navbar {
-      background-color: #f8f9fa;
-      padding: 1rem;
-    }
-
-    .navbar-brand {
-      font-size: 24px;
-      font-weight: 700;
-      color: #007bff;
-    }
-
-    .navbar-toggler {
-      border-color: #007bff;
-    }
-  </style>
-</head>
-<body>
-  <!-- Cabeçalho com Botões Almoxarifado ou Login -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <!-- Removido o título "Sistema de Transcrição" -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        {% if current_user.is_authenticated %}
-        <!-- Menus para usuários autenticados -->
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a href="/produtos" class="btn btn-almoxarifado">
-              <div class="card-body">
-                <h5 class="card-title">Almoxarifado</h5>
-                <p class="card-text fs-4">{{ total_produtos }}</p>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/usuarios/logout">Logout</a>
-          </li>
-        </ul>
-        {% else %}
-        <!-- Menus para usuários não autenticados -->
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('usuarios_bp.login') }}">Login</a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-    </div>
-  </nav>
-
-  <div class="container mt-4">
+{% block content %}
+<div class="container mt-4">
     <h1 class="text-center">Gravar Áudio para Relatórios</h1>
     
     <!-- Botões para gravação dos áudios de Início e Fim -->
     <div class="d-flex justify-content-center gap-3 mb-4">
-      <button id="btnGravarInicio" class="btn btn-success btn-lg">Gravar Início</button>
-      <button id="btnGravarFim" class="btn btn-success btn-lg">Gravar Fim</button>
+        <button id="btnGravarInicio" class="btn btn-success btn-lg">Gravar Início</button>
+        <button id="btnGravarFim" class="btn btn-success btn-lg">Gravar Fim</button>
     </div>
     
     <!-- Área para exibir e editar as transcrições -->
     <div id="transcricoes">
-      <div class="mb-3">
-        <label for="textoTranscricaoInicio" class="form-label"><strong>Gravação do Início</strong></label>
-        <textarea id="textoTranscricaoInicio" class="form-control" rows="5" placeholder="Transcrição do áudio de início..."></textarea>
-      </div>
-      <div class="mb-3">
-        <label for="textoTranscricaoFim" class="form-label"><strong>Gravação do Fim</strong></label>
-        <textarea id="textoTranscricaoFim" class="form-control" rows="5" placeholder="Transcrição do áudio de fim..."></textarea>
-      </div>
-      <!-- Botão Concluir para finalizar a edição -->
-      <button id="btnConcluir" class="btn btn-primary">Concluir</button>
+        <div class="mb-3">
+            <label for="textoTranscricaoInicio" class="form-label"><strong>Gravação do Início</strong></label>
+            <textarea id="textoTranscricaoInicio" class="form-control" rows="5" placeholder="Transcrição do áudio de início..."></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="textoTranscricaoFim" class="form-label"><strong>Gravação do Fim</strong></label>
+            <textarea id="textoTranscricaoFim" class="form-control" rows="5" placeholder="Transcrição do áudio de fim..."></textarea>
+        </div>
+        <!-- Botão Concluir para finalizar a edição -->
+        <button id="btnConcluir" class="btn btn-primary">Concluir</button>
     </div>
     
     <!-- Botões para navegar para Relatórios e Gráficos -->
     <div id="navegacao" class="mt-4 d-flex justify-content-between">
-      <a href="{{ url_for('relatorios') }}" class="btn btn-primary">Ver Relatórios</a>
-      <a href="{{ url_for('graficos') }}" class="btn btn-primary">Ver Gráficos</a>
+        <a href="{{ url_for('relatorios') }}" class="btn btn-primary">Ver Relatórios</a>
+        <a href="{{ url_for('graficos') }}" class="btn btn-primary">Ver Gráficos</a>
     </div>
-  </div>
-  
-  <!-- Inclusão do Bootstrap JS e dependências -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-  
-  <!-- Inclusão do script de gravação -->
-  <script src="{{ url_for('static', filename='recorder.js') }}"></script>
-  
-  <script>
+</div>
+
+<!-- Inclusão do script de gravação -->
+<script src="{{ url_for('static', filename='recorder.js') }}"></script>
+
+<script>
     let currentRecording = null;
-    
+
     const btnGravarInicio = document.getElementById('btnGravarInicio');
     const btnGravarFim = document.getElementById('btnGravarFim');
     const btnConcluir = document.getElementById('btnConcluir');
     const textoTranscricaoInicio = document.getElementById('textoTranscricaoInicio');
     const textoTranscricaoFim = document.getElementById('textoTranscricaoFim');
-    
+
     function uploadAndGetTranscription(recordingType, audioBlob, callback) {
-      let formData = new FormData();
-      formData.append("audio_data", audioBlob, recordingType + "_" + Date.now() + ".wav");
-      formData.append("tipo", recordingType);
-      
-      fetch("/processar_audio", {
-        method: "POST",
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.transcricao) {
-          callback(data.transcricao);
-        } else {
-          callback("Erro na transcrição");
-        }
-      })
-      .catch(error => {
-        console.error("Erro:", error);
-        callback("Erro na transcrição");
-      });
-    }
-    
-    function startRecording(type) {
-      if (currentRecording !== null) {
-        stopRecording(currentRecording);
-      }
-      
-      currentRecording = type;
-      
-      if (type === 'inicio') {
-        btnGravarInicio.classList.remove('btn-success');
-        btnGravarInicio.classList.add('btn-danger');
-        btnGravarInicio.textContent = "Gravando Início...";
-        textoTranscricaoInicio.placeholder = "Gravando áudio de início...";
-      } else if (type === 'fim') {
-        btnGravarFim.classList.remove('btn-success');
-        btnGravarFim.classList.add('btn-danger');
-        btnGravarFim.textContent = "Gravando Fim...";
-        textoTranscricaoFim.placeholder = "Gravando áudio de fim...";
-      }
-      
-      // Chama a função de gravação do recorder.js
-      recorder.start();
-    }
-    
-    function stopRecording(type) {
-      recorder.stop().then(blob => {
-        uploadAndGetTranscription(type, blob, function(transcricaoRecebida) {
-          if (type === 'inicio') {
-            textoTranscricaoInicio.value = transcricaoRecebida;
-            btnGravarInicio.classList.remove('btn-danger');
-            btnGravarInicio.classList.add('btn-success');
-            btnGravarInicio.textContent = "Gravar Início";
-          } else if (type === 'fim') {
-            textoTranscricaoFim.value = transcricaoRecebida;
-            btnGravarFim.classList.remove('btn-danger');
-            btnGravarFim.classList.add('btn-success');
-            btnGravarFim.textContent = "Gravar Fim";
-          }
+        let formData = new FormData();
+        formData.append("audio_data", audioBlob, recordingType + "_" + Date.now() + ".wav");
+        formData.append("tipo", recordingType);
+        
+        fetch("/processar_audio", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.transcricao) {
+                callback(data.transcricao);
+            } else {
+                callback("Erro na transcrição");
+            }
+        })
+        .catch(error => {
+            console.error("Erro:", error);
+            callback("Erro na transcrição");
         });
-      }).catch(err => {
-        console.error("Erro ao parar a gravação:", err);
-      });
-      
-      currentRecording = null;
     }
-    
-    btnGravarInicio.addEventListener('click', function() {
-      if (currentRecording === 'inicio') {
-        stopRecording('inicio');
-      } else {
-        startRecording('inicio');
-      }
-    });
-    
-    btnGravarFim.addEventListener('click', function() {
-      if (currentRecording === 'fim') {
-        stopRecording('fim');
-      } else {
-        startRecording('fim');
-      }
-    });
-    
-    btnConcluir.addEventListener('click', function() {
-      const transcricaoInicio = textoTranscricaoInicio.value;
-      const transcricaoFim = textoTranscricaoFim.value;
-      
-      // Envia os textos para o servidor
-      fetch('/concluir', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          texto_inicial: transcricaoInicio,
-          texto_final: transcricaoFim,
-        }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert("Processamento concluído com sucesso!");
-        } else {
-          alert("Erro ao processar os textos: " + data.error);
+
+    function startRecording(type) {
+        if (currentRecording !== null) {
+            stopRecording(currentRecording);
         }
-      })
-      .catch(error => {
-        console.error("Erro na requisição:", error);
-        alert("Erro ao enviar os textos para o servidor.");
-      });
+
+        currentRecording = type;
+
+        if (type === 'inicio') {
+            btnGravarInicio.classList.remove('btn-success');
+            btnGravarInicio.classList.add('btn-danger');
+            btnGravarInicio.textContent = "Gravando Início...";
+            textoTranscricaoInicio.placeholder = "Gravando áudio de início...";
+        } else if (type === 'fim') {
+            btnGravarFim.classList.remove('btn-success');
+            btnGravarFim.classList.add('btn-danger');
+            btnGravarFim.textContent = "Gravando Fim...";
+            textoTranscricaoFim.placeholder = "Gravando áudio de fim...";
+        }
+
+        // Chama a função de gravação do recorder.js
+        recorder.start();
+    }
+
+    function stopRecording(type) {
+        recorder.stop().then(blob => {
+            uploadAndGetTranscription(type, blob, function(transcricaoRecebida) {
+                if (type === 'inicio') {
+                    textoTranscricaoInicio.value = transcricaoRecebida;
+                    btnGravarInicio.classList.remove('btn-danger');
+                    btnGravarInicio.classList.add('btn-success');
+                    btnGravarInicio.textContent = "Gravar Início";
+                } else if (type === 'fim') {
+                    textoTranscricaoFim.value = transcricaoRecebida;
+                    btnGravarFim.classList.remove('btn-danger');
+                    btnGravarFim.classList.add('btn-success');
+                    btnGravarFim.textContent = "Gravar Fim";
+                }
+            });
+        }).catch(err => {
+            console.error("Erro ao parar a gravação:", err);
+        });
+
+        currentRecording = null;
+    }
+
+    btnGravarInicio.addEventListener('click', function() {
+        startRecording('inicio');
     });
-  </script>
-</body>
-</html>
+
+    btnGravarFim.addEventListener('click', function() {
+        startRecording('fim');
+    });
+
+    btnConcluir.addEventListener('click', function() {
+        alert('Gravação concluída!');
+    });
+</script>
+{% endblock %}
