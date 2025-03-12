@@ -9,10 +9,18 @@ produtos_bp = Blueprint('produtos', __name__)
 def listar_produtos():
     try:
         produtos = Produto.query.all()
-        return render_template('produtos.html', produtos=produtos)
+        categorias = Categoria.query.all()
+        # Obter a contagem de produtos por categoria
+        contagem_por_categoria = {categoria.id: categoria.contar_produtos() for categoria in categorias}
+        return render_template(
+            'produtos.html', 
+            produtos=produtos, 
+            categorias=categorias, 
+            contagem_por_categoria=contagem_por_categoria
+        )
     except Exception as e:
         flash(f'Erro ao listar produtos: {str(e)}', 'danger')
-        return render_template('produtos.html', produtos=[])
+        return render_template('produtos.html', produtos=[], categorias=[], contagem_por_categoria={})
 
 # Rota para criar um novo produto: acessível em /produtos/novo
 @produtos_bp.route('/novo', methods=['GET', 'POST'])
@@ -27,7 +35,6 @@ def novo_produto():
         descricao = request.form.get('descricao')
         unidade_id = request.form.get('unidade_id')  # Usando unidade_id
         categoria_id = request.form.get('categoria_id')
-        # Removida a extração de fornecedor_id
 
         # Validação simples: nome, preco, quantidade e unidade são obrigatórios
         if not nome or not preco or not quantidade or not unidade_id:
@@ -41,7 +48,7 @@ def novo_produto():
                 preco=preco,
                 quantidade_atual=quantidade,
                 descricao=descricao,
-                unidade_id=unidade_id,  # Relacionamento com Unidade
+                unidade_id=unidade_id,
                 categoria_id=categoria_id
             )
             db.session.add(novo_produto)
@@ -60,15 +67,14 @@ def novo_produto():
 def editar_produto(id):
     produto = Produto.query.get_or_404(id)
     categorias = Categoria.query.all()
-    unidades = Unidade.query.all()  # Consulta para unidades
+    unidades = Unidade.query.all()
     if request.method == 'POST':
         nome = request.form.get('nome')
         preco = request.form.get('preco')
         quantidade = request.form.get('quantidade')
         descricao = request.form.get('descricao')
-        unidade_id = request.form.get('unidade_id')  # Usando unidade_id
+        unidade_id = request.form.get('unidade_id')
         categoria_id = request.form.get('categoria_id')
-        # Removida a extração de fornecedor_id
 
         if not nome or not preco or not quantidade or not unidade_id:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
@@ -79,7 +85,7 @@ def editar_produto(id):
             produto.preco = preco
             produto.quantidade_atual = quantidade
             produto.descricao = descricao
-            produto.unidade_id = unidade_id  # Atualizando relacionamento com Unidade
+            produto.unidade_id = unidade_id
             produto.categoria_id = categoria_id
             db.session.commit()
             flash('Produto atualizado com sucesso!', 'success')

@@ -10,6 +10,7 @@ from flask_login import LoginManager
 from models import Usuario  # Para o user_loader
 from routes.categoria import categoria_bp  # Importação do Blueprint de categorias
 from routes.unidades import unidades_bp  # Importação do Blueprint de unidades
+from routes.dashboard import dashboard_bp  # Importação do Blueprint do dashboard
 
 # Criação do aplicativo Flask
 app = Flask(__name__)
@@ -41,8 +42,9 @@ app.config['AUDIOS_DIR'] = os.path.join(os.getcwd(), 'data', 'audios')
 # Registro dos blueprints do sistema de almoxarifado
 app.register_blueprint(produtos_bp, url_prefix="/produtos")
 app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
-app.register_blueprint(categoria_bp, url_prefix="/categorias")  # Registro do Blueprint de Categorias
-app.register_blueprint(unidades_bp, url_prefix="/unidades")  # Registro do Blueprint de Unidades
+app.register_blueprint(categoria_bp, url_prefix="/categorias")
+app.register_blueprint(unidades_bp, url_prefix="/unidades")
+app.register_blueprint(dashboard_bp, url_prefix="/")
 
 # Rotas principais
 @app.route("/")
