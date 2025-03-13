@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 from flask_login import UserMixin
+from datetime import datetime, timezone
+from enum import Enum as PyEnum
 
 db = SQLAlchemy()
 
@@ -14,20 +15,35 @@ class Usuario(db.Model, UserMixin):
     def __repr__(self):
         return f'<Usuario {self.nome} ({self.email})>'
 
+# Define um Enum com as categorias fixas
+class CategoriaEnum(PyEnum):
+    FILME = "Filme"
+    COLA_MEL = "Cola Mel"
+    COLA_UNA = "Cola Una"
+    PO_PINTURA = "Pó para Pintura"
+    COLA_KISAFIX = "Cola Kisafix"
+    EPS = "EPS"
+    ACO = "Aço"
+
 class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(100), nullable=False)
+    # Usa o Enum para garantir que só sejam permitidos os valores fixos
+    nome = db.Column(db.Enum(CategoriaEnum, values_callable=lambda enum: [e.value for e in enum]), nullable=False)
     quantidade_minima = db.Column(db.Float, default=0)
-    notificado = db.Column(db.Boolean, default=False)  # Adicione essa linha
+    quantidade_total = db.Column(db.Float, default=0)  # Armazena o total de produtos
+    notificado = db.Column(db.Boolean, default=False)
     produtos = db.relationship('Produto', back_populates='categoria', lazy='dynamic')
 
     def contar_produtos(self):
-        return sum(produto.quantidade_atual for produto in self.produtos)
+        # Caso self.produtos seja uma query, use .all() para iterar
+        return sum(produto.quantidade_atual for produto in self.produtos.all())
+
+    def atualizar_quantidade_total(self):
+        self.quantidade_total = self.contar_produtos()
 
     def __repr__(self):
-        return f'<Categoria {self.nome}>'
-
+        return f'<Categoria {self.nome.value}>'
 
 class Unidade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,4 +64,14 @@ class Produto(db.Model):
     categoria = db.relationship('Categoria', back_populates='produtos')
 
     def __repr__(self):
-        return f'<Produto {self.nome} (Código: {self.codigo})>'
+        return f'<Produto {self.nome} (ID: {self.id})>'
+
+class Relatorio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome_cliente = db.Column(db.String(100), nullable=False)
+    horario_inicio = db.Column(db.Time, nullable=False)
+    tarefa = db.Column(db.String(150), nullable=False)
+    materiais_gastos = db.Column(db.JSON)  # Armazena um dicionário com os materiais e quantidades
+    metros_quadrados = db.Column(db.Float, nullable=False)
+    horario_fim = db.Column(db.Time, nullable=False)
+    criado_em = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

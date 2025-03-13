@@ -5,12 +5,14 @@ import transcrever_audio  # Função de transcrição de áudio
 from models import db  # Instância do SQLAlchemy
 from routes.produtos import produtos_bp
 from routes.usuarios import usuarios_bp
-from flask_migrate import Migrate
-from flask_login import LoginManager
-from models import Usuario  # Para o user_loader
 from routes.categoria import categoria_bp  # Importação do Blueprint de categorias
 from routes.unidades import unidades_bp  # Importação do Blueprint de unidades
 from routes.dashboard import dashboard_bp  # Importação do Blueprint do dashboard
+from routes.processar_formulario import relatorio_bp  # Importação do Blueprint de relatórios
+
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from models import Usuario  # Para o user_loader
 
 # Criação do aplicativo Flask
 app = Flask(__name__)
@@ -45,6 +47,7 @@ app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
 app.register_blueprint(categoria_bp, url_prefix="/categorias")
 app.register_blueprint(unidades_bp, url_prefix="/unidades")
 app.register_blueprint(dashboard_bp, url_prefix="/")
+app.register_blueprint(relatorio_bp, url_prefix="/relatorio_form")  # Blueprint de processamento de formulário de relatório
 
 # Rotas principais
 @app.route("/")

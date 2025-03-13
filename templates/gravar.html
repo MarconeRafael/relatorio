@@ -4,7 +4,10 @@
 <div class="container mt-5">
   <h1 class="text-center mb-4">📋 Relatório de Produção de Tarefas</h1>
   
-  <form id="formRelatorio">
+  <form id="formRelatorio" action="{{ url_for('relatorio_bp.processar_formulario') }}" method="POST">
+    {# Se não estiver usando Flask-WTF, remova a linha abaixo #}
+    {# {{ form.csrf_token }} #}
+    
     <!-- Nome do Cliente com áudio -->
     <div class="mb-4">
       <label for="nomeCliente" class="form-label fs-5"><strong>👤 Nome do Cliente</strong></label>
@@ -21,7 +24,11 @@
     <div class="mb-4">
       <label for="horarioInicio" class="form-label fs-5"><strong>⏰ Horário de Início</strong></label>
       <input type="time" id="horarioInicio" name="horarioInicio" class="form-control" placeholder="08:30">
-      <div class="form-text">Utilize o formato 24h (ex: 08:30).</div>
+      <div class="form-text">
+        Utilize o formato 24h (ex: 08:30). 
+        <br>
+        <small class="text-muted">Dica: Insira o horário exato em que a tarefa iniciou. Certifique-se de que o valor seja válido.</small>
+      </div>
     </div>
     
     <!-- Tarefa -->
@@ -57,7 +64,11 @@
     <div class="mb-4">
       <label for="horarioFim" class="form-label fs-5"><strong>⏰ Horário de Fim</strong></label>
       <input type="time" id="horarioFim" name="horarioFim" class="form-control" placeholder="17:00">
-      <div class="form-text">Utilize o formato 24h (ex: 17:00).</div>
+      <div class="form-text">
+        Utilize o formato 24h (ex: 17:00). 
+        <br>
+        <small class="text-muted">Dica: O horário de fim deve ser posterior ao horário de início. Verifique se os valores estão corretos.</small>
+      </div>
     </div>
 
     <!-- Botão Concluir -->

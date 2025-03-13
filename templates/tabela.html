@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container mt-5">
+    <h1>Relatórios de Produção</h1>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome do Cliente</th>
+          <th>Tarefa</th>
+          <th>Materiais Gastos</th>
+          <th>Metros Quadrados</th>
+          <th>Horário Início</th>
+          <th>Horário Fim</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for relatorio in relatorios %}
+          <tr>
+            <td>{{ relatorio.id }}</td>
+            <td>{{ relatorio.nome_cliente }}</td>
+            <td>{{ relatorio.tarefa }}</td>
+            <td>
+              {% for material, valor in relatorio.materiais_gastos.items() %}
+                {{ material }}: {{ valor }}<br>
+              {% endfor %}
+            </td>
+            <td>{{ relatorio.metros_quadrados }}</td>
+            <td>{{ relatorio.horario_inicio.strftime("%H:%M") }}</td>
+            <td>{{ relatorio.horario_fim.strftime("%H:%M") }}</td>
+            <td>{{ relatorio.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
