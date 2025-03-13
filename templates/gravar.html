@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">📋 Relatório de Produção de Tarefas</h1>
+  
+  <form id="formRelatorio">
+    <!-- Nome do Cliente com áudio -->
+    <div class="mb-4">
+      <label for="nomeCliente" class="form-label fs-5"><strong>👤 Nome do Cliente</strong></label>
+      <div class="input-group">
+        <input type="text" id="nomeCliente" name="nomeCliente" class="form-control" placeholder="Digite o nome do cliente...">
+        <button type="button" id="btnGravarnomeCliente" class="btn btn-outline-success">
+          🎙️ Gravar Nome do Cliente
+        </button>
+      </div>
+      <div class="form-text">Você pode digitar ou utilizar a gravação para preencher este campo.</div>
+    </div>
+
+    <!-- Horário de Início -->
+    <div class="mb-4">
+      <label for="horarioInicio" class="form-label fs-5"><strong>⏰ Horário de Início</strong></label>
+      <input type="time" id="horarioInicio" name="horarioInicio" class="form-control" placeholder="08:30">
+      <div class="form-text">Utilize o formato 24h (ex: 08:30).</div>
+    </div>
+    
+    <!-- Tarefa -->
+    <div class="mb-4">
+      <label for="tarefa" class="form-label fs-5"><strong>🛠️ Tarefa</strong></label>
+      <select id="tarefa" name="tarefa" class="form-select">
+        <option value="" disabled selected>Selecione uma tarefa</option>
+        <option value="Colagem de Filme (Normal)">Colagem de Filme (Normal)</option>
+        <option value="Corte de Isopor">Corte de Isopor</option>
+        <option value="Pintura Eletrostática">Pintura Eletrostática</option>
+        <option value="Colagem de Cola Mel">Colagem de Cola Mel</option>
+      </select>
+      <div class="form-text">Após selecionar, os campos de material gasto serão atualizados automaticamente.</div>
+    </div>
+
+    <!-- Material Gasto (apenas inputs, sem áudio) -->
+    <div class="mb-4" id="materialGastoSection" style="display:none;">
+      <label class="form-label fs-5"><strong>🛒 Material Gasto</strong></label>
+      <div class="form-text mb-2">Informe a quantidade de material gasto conforme o material esperado por m².</div>
+      <div id="materialContainer">
+        <!-- Campos serão criados dinamicamente -->
+      </div>
+    </div>
+
+    <!-- Metros Quadrados -->
+    <div class="mb-4">
+      <label for="metrosQuadrados" class="form-label fs-5"><strong>📏 Metros Quadrados</strong></label>
+      <input type="number" step="any" id="metrosQuadrados" name="metrosQuadrados" class="form-control" placeholder="Ex: 25.5">
+      <div class="form-text">Informe a área total trabalhada em metros quadrados.</div>
+    </div>
+    
+    <!-- Horário de Fim -->
+    <div class="mb-4">
+      <label for="horarioFim" class="form-label fs-5"><strong>⏰ Horário de Fim</strong></label>
+      <input type="time" id="horarioFim" name="horarioFim" class="form-control" placeholder="17:00">
+      <div class="form-text">Utilize o formato 24h (ex: 17:00).</div>
+    </div>
+
+    <!-- Botão Concluir -->
+    <div class="d-flex justify-content-center">
+      <button type="submit" class="btn btn-primary btn-lg px-5 py-3">✅ Concluir</button>
+    </div>
+  </form>
+  
+  <!-- Botões para navegação -->
+  <div id="navegacao" class="mt-5 d-flex justify-content-between">
+    <a href="{{ url_for('relatorios') }}" class="btn btn-outline-primary">📊 Ver Relatórios</a>
+    <a href="{{ url_for('graficos') }}" class="btn btn-outline-primary">📈 Ver Gráficos</a>
+  </div>
+</div>
+
+<!-- Inclusão do script de gravação -->
+<script src="{{ url_for('static', filename='recorder.js') }}"></script>
+<script>
+  // Variáveis para controle do áudio do nome do cliente
+  let mediaRecorderNomeCliente;
+  let recordedChunksNomeCliente = [];
+
+  document.getElementById('btnGravarnomeCliente').addEventListener('click', async function() {
+    const btn = document.getElementById('btnGravarnomeCliente');
+
+    if (mediaRecorderNomeCliente && mediaRecorderNomeCliente.state === "recording") {
+      // Encerra a gravação
+      mediaRecorderNomeCliente.stop();
+      btn.textContent = "🎙️ Gravar Nome do Cliente";
+    } else {
+      // Inicia a gravação
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Seu navegador não suporta gravação de áudio.");
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recordedChunksNomeCliente = [];
+        mediaRecorderNomeCliente = new MediaRecorder(stream);
+        
+        mediaRecorderNomeCliente.ondataavailable = function(e) {
+          if (e.data.size > 0) {
+            recordedChunksNomeCliente.push(e.data);
+          }
+        };
+
+        mediaRecorderNomeCliente.onstop = function() {
+          const blob = new Blob(recordedChunksNomeCliente, { type: 'audio/webm' });
+          enviarAudio(blob, 'nomeCliente');
+        };
+
+        mediaRecorderNomeCliente.start();
+        btn.textContent = "⏹️ Encerrar Gravação";
+      } catch (err) {
+        console.error("Erro ao acessar o microfone: ", err);
+      }
+    }
+  });
+
+  // Função para enviar o áudio para o servidor e preencher o campo com a transcrição
+  function enviarAudio(blob, fieldId) {
+    const formData = new FormData();
+    formData.append("audio_data", blob, fieldId + "_" + Date.now() + ".webm");
+    formData.append("field", fieldId);
+    fetch("/processar_audio", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      const text = data.transcricao || "Erro na transcrição";
+      document.getElementById(fieldId).value = text;
+    })
+    .catch(error => {
+      console.error("Erro na requisição:", error);
+      document.getElementById(fieldId).value = "Erro ao enviar áudio.";
+    });
+  }
+
+  // Atualiza dinamicamente os campos de Material Gasto (apenas inputs, sem áudio)
+  document.getElementById('tarefa').addEventListener('change', function() {
+    const tarefa = this.value;
+    const materialData = {
+      "Colagem de Filme (Normal)": {"Filme": 1.03, "Cola Una": 60},
+      "Corte de Isopor": {},
+      "Pintura Eletrostática": {"Pó para Pintura": 140},
+      "Colagem de Cola Mel": {"Cola Mel": 40}
+    }[tarefa];
+    const materialContainer = document.getElementById('materialContainer');
+    materialContainer.innerHTML = ""; // Limpa campos anteriores
+
+    if (materialData && Object.keys(materialData).length > 0) {
+      document.getElementById('materialGastoSection').style.display = 'block';
+      for (const material in materialData) {
+        // Cria um grupo de input para cada material esperado (sem botão de áudio)
+        const div = document.createElement('div');
+        div.className = "input-group mb-2";
+        
+        const span = document.createElement('span');
+        span.className = "input-group-text";
+        span.textContent = material + " (esperado: " + materialData[material] + " por m²)";
+        
+        const input = document.createElement('input');
+        input.type = "number";
+        input.step = "any";
+        input.name = "material_" + material;
+        input.id = "material_" + material;
+        input.className = "form-control";
+        input.placeholder = "Digite a quantidade usada";
+
+        div.appendChild(span);
+        div.appendChild(input);
+        materialContainer.appendChild(div);
+      }
+    } else {
+      document.getElementById('materialGastoSection').style.display = 'none';
+    }
+  });
+</script>
+{% endblock %}

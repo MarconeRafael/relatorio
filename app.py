@@ -49,7 +49,7 @@ app.register_blueprint(dashboard_bp, url_prefix="/")
 # Rotas principais
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("gravar.html")
 
 @app.route("/dashboard")
 def dashboard():
