@@ -19,6 +19,13 @@ def dashboard():
         rel.aplicar_materiais_gastos()
     db.session.commit()
 
+    # 2.1. Certifique-se de que o estoque não seja negativo
+    categorias = Categoria.query.all()
+    for categoria in categorias:
+        if categoria.quantidade_total < 0:
+            categoria.quantidade_total = 0
+    db.session.commit()
+
     # 3. Atualiza as notificações de estoque baixo
     categorias = Categoria.query.all()  # Reconsulta para refletir os valores atualizados
     for categoria in categorias:
