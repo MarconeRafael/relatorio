@@ -119,7 +119,8 @@ def processar_formulario():
     db.session.commit()
 
     flash("Relatório salvo com sucesso!", "success")
-    return redirect(url_for('relatorio_bp.tabela'))
+    # Redireciona para a rota /dashboard após concluir o processamento
+    return redirect(url_for('dashboard'))
 
 @relatorio_bp.route('/tabela')
 def tabela():
