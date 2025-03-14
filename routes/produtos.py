@@ -1,15 +1,19 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import Produto, Categoria, Unidade, db
+from models import Produto, Categoria, Unidade, db, CATEGORIAS_PREDEFINIDAS
 
 # Cria o Blueprint para Produtos
 produtos_bp = Blueprint('produtos', __name__)
+
+def get_categorias_predefinidas():
+    # Retorna somente as categorias cujos nomes estão no dicionário de categorias pré-definidas
+    return Categoria.query.filter(Categoria.nome.in_(list(CATEGORIAS_PREDEFINIDAS.keys()))).all()
 
 # Rota para listar produtos: acessível em /produtos/
 @produtos_bp.route('/')
 def listar_produtos():
     try:
         produtos = Produto.query.all()
-        categorias = Categoria.query.all()
+        categorias = get_categorias_predefinidas()
         # Obter a contagem de produtos por categoria
         contagem_por_categoria = {categoria.id: categoria.contar_produtos() for categoria in categorias}
         return render_template(
@@ -25,7 +29,7 @@ def listar_produtos():
 # Rota para criar um novo produto: acessível em /produtos/novo
 @produtos_bp.route('/novo', methods=['GET', 'POST'])
 def novo_produto():
-    categorias = Categoria.query.all()
+    categorias = get_categorias_predefinidas()
     unidades = Unidade.query.all()
     if request.method == 'POST':
         nome = request.form.get('nome')
@@ -64,7 +68,7 @@ def novo_produto():
 @produtos_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar_produto(id):
     produto = Produto.query.get_or_404(id)
-    categorias = Categoria.query.all()
+    categorias = get_categorias_predefinidas()
     unidades = Unidade.query.all()
     if request.method == 'POST':
         nome = request.form.get('nome')
