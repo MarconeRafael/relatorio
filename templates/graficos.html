@@ -5,40 +5,75 @@
 <div class="container mt-5">
   <h1 class="text-center mb-4">Visualização dos Gráficos</h1>
   
-  <!-- Seção Colapsável: Resumo Individual de Tarefas -->
+  <!-- Seção Colapsável: Resumo Individual de Tempo -->
   <div class="mb-3">
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#individualSection" aria-expanded="false" aria-controls="individualSection">
-      Resumo Individual de Tarefas (Tempo e Consumo)
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#individualTimeSection" aria-expanded="false" aria-controls="individualTimeSection">
+      Resumo Individual de Tempo (Real vs. Esperado)
     </button>
   </div>
-  <div class="collapse" id="individualSection">
+  <div class="collapse" id="individualTimeSection">
     <div class="card card-body">
-      <!-- Gráfico de Barras Agrupadas para comparar Tempo Real vs. Esperado e Consumo Real vs. Esperado -->
       <canvas id="groupedBarChart" width="400" height="200"></canvas>
     </div>
   </div>
-
-  <!-- Seção Colapsável: Média Semanal -->
+  
+  <!-- Seção Colapsável: Média Semanal de Tempo -->
   <div class="mb-3 mt-4">
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#weeklySection" aria-expanded="false" aria-controls="weeklySection">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#weeklyTimeSection" aria-expanded="false" aria-controls="weeklyTimeSection">
       Média Semanal de Tempo por m²
     </button>
   </div>
-  <div class="collapse" id="weeklySection">
+  <div class="collapse" id="weeklyTimeSection">
     <div class="card card-body">
       <canvas id="weeklyChart" width="400" height="200"></canvas>
     </div>
   </div>
-
-  <!-- Seção Colapsável: Média Mensal -->
+  
+  <!-- Seção Colapsável: Média Mensal de Tempo -->
   <div class="mb-3 mt-4">
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#monthlySection" aria-expanded="false" aria-controls="monthlySection">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#monthlyTimeSection" aria-expanded="false" aria-controls="monthlyTimeSection">
       Média Mensal de Tempo por m²
     </button>
   </div>
-  <div class="collapse" id="monthlySection">
+  <div class="collapse" id="monthlyTimeSection">
     <div class="card card-body">
       <canvas id="monthlyChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+  
+  <!-- Seção Colapsável: Resumo Individual de Consumo -->
+  <div class="mb-3 mt-4">
+    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#individualConsumptionSection" aria-expanded="false" aria-controls="individualConsumptionSection">
+      Resumo Individual de Consumo (Real vs. Esperado)
+    </button>
+  </div>
+  <div class="collapse" id="individualConsumptionSection">
+    <div class="card card-body">
+      <canvas id="groupedConsumptionChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+  
+  <!-- Seção Colapsável: Média Semanal de Consumo -->
+  <div class="mb-3 mt-4">
+    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#weeklyConsumptionSection" aria-expanded="false" aria-controls="weeklyConsumptionSection">
+      Média Semanal de Consumo Total
+    </button>
+  </div>
+  <div class="collapse" id="weeklyConsumptionSection">
+    <div class="card card-body">
+      <canvas id="weeklyConsumptionChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+  
+  <!-- Seção Colapsável: Média Mensal de Consumo -->
+  <div class="mb-3 mt-4">
+    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#monthlyConsumptionSection" aria-expanded="false" aria-controls="monthlyConsumptionSection">
+      Média Mensal de Consumo Total
+    </button>
+  </div>
+  <div class="collapse" id="monthlyConsumptionSection">
+    <div class="card card-body">
+      <canvas id="monthlyConsumptionChart" width="400" height="200"></canvas>
     </div>
   </div>
 </div>

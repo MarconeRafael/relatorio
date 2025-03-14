@@ -251,3 +251,67 @@ function initCharts() {
   
 // Inicializa os gráficos quando o documento estiver carregado.
 document.addEventListener('DOMContentLoaded', initCharts);
+
+function renderGroupedConsumptionChart(tarefasIndividuais) {
+ console.log("Renderizando gráfico de consumo total com dados:", tarefasIndividuais);
+ const labels = [];
+ const realConsumptionData = [];
+ const expectedConsumptionData = [];
+ 
+ tarefasIndividuais.forEach(item => {
+   let realConsumption = 0;
+   let expectedConsumption = 0;
+   // Utiliza os novos campos para consumo total
+   const realConsumo = item.actual_consumo_total;
+   const expectedConsumo = item.expected_consumo_total;
+   
+   if (realConsumo && Object.keys(realConsumo).length > 0) {
+     const material = Object.keys(realConsumo)[0];
+     // Converte os valores para números, se necessário
+     realConsumption = parseFloat(realConsumo[material]) || 0;
+     expectedConsumption = (expectedConsumo && Object.keys(expectedConsumo).length > 0) 
+                             ? (parseFloat(expectedConsumo[material]) || 0) 
+                             : 0;
+     labels.push(`${item.tarefa} (ID ${item.id}) - ${material}`);
+   } else {
+     labels.push(`${item.tarefa} (ID ${item.id})`);
+   }
+   realConsumptionData.push(realConsumption);
+   expectedConsumptionData.push(expectedConsumption);
+ });
+ 
+ const canvas = document.getElementById('groupedConsumptionChart');
+ if (!canvas) {
+   console.warn("Canvas com id 'groupedConsumptionChart' não encontrado. Pulando renderização do gráfico de consumo.");
+   return;
+ }
+ const ctx = canvas.getContext('2d');
+ new Chart(ctx, {
+   type: 'bar',
+   data: {
+     labels: labels,
+     datasets: [
+       {
+         label: 'Consumo Real Total',
+         data: realConsumptionData,
+         backgroundColor: 'rgba(75, 192, 192, 0.5)',
+         borderColor: 'rgba(75, 192, 192, 1)',
+         borderWidth: 1
+       },
+       {
+         label: 'Consumo Esperado Total',
+         data: expectedConsumptionData,
+         backgroundColor: 'rgba(153, 102, 255, 0.5)',
+         borderColor: 'rgba(153, 102, 255, 1)',
+         borderWidth: 1
+       }
+     ]
+   },
+   options: {
+     responsive: true,
+     scales: {
+       y: { beginAtZero: true }
+     }
+   }
+ });
+}

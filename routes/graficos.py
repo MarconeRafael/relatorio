@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify
 from models import Relatorio
-from datetime import datetime
 from collections import defaultdict
 import statistics
 
@@ -36,13 +35,34 @@ def chart_data():
     for rel in relatorios:
         # Obtém os valores esperados para a tarefa, se houver; caso contrário, usa valores padrão
         exp = expected_values.get(rel.tarefa, {"tempo_por_m2": None, "consumo": {}})
+        
+        # Calcular o tempo total real e o tempo total esperado para a tarefa
+        actual_tempo_total = rel.calcular_duracao()
+        expected_tempo_total = None
+        if exp.get("tempo_por_m2") is not None and rel.metros_quadrados:
+            expected_tempo_total = exp.get("tempo_por_m2") * rel.metros_quadrados
+        
+        # Para o consumo, o real é o total consumido já registrado (em materiais_gastos)
+        actual_consumo_total = rel.materiais_gastos
+        # Calcular o consumo total esperado: para cada material esperado, multiplique pelo número de metros quadrados
+        expected_consumo_total = {}
+        for material, valor in exp.get("consumo", {}).items():
+            if rel.metros_quadrados:
+                expected_consumo_total[material] = valor * rel.metros_quadrados
+        
         tarefas_individuais.append({
             "id": rel.id,
             "tarefa": rel.tarefa,
             "duracao": rel.calcular_duracao(),
             "tempo_por_m2": rel.tempo_por_m2(),
             "consumo_por_m2": rel.consumo_por_m2(),
+            "metros_quadrados": rel.metros_quadrados,
+            "actual_tempo_total": actual_tempo_total,
+            "expected_tempo_total": expected_tempo_total,
+            "actual_consumo_total": actual_consumo_total,
+            "expected_consumo_total": expected_consumo_total,
             "criado_em": rel.criado_em.strftime("%Y-%m-%d"),
+            # Mantém também os valores por m² para referência
             "expected_tempo_por_m2": exp.get("tempo_por_m2"),
             "expected_consumo_por_m2": exp.get("consumo")
         })
