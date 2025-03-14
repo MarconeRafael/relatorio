@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from models import Categoria, db
-from encaminhar_contato import enviar_email  # Importe sua função de envio de e-mail
+from encaminhar_contato import enviar_email  # Função de envio de e-mail
 from keys import senha_, email_
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
@@ -10,10 +10,11 @@ def dashboard():
     categorias = Categoria.query.all()
 
     for categoria in categorias:
-        # Atualiza o campo quantidade_total com base no total calculado a partir dos produtos
+        # Atualiza a quantidade total de produtos associados à categoria
         categoria.atualizar_quantidade_total()
         total_produtos = categoria.quantidade_total
         
+        # Se a quantidade total for menor ou igual à quantidade mínima e ainda não foi notificada, enviar e-mail
         if total_produtos <= categoria.quantidade_minima:
             if not categoria.notificado:
                 enviar_email(
@@ -25,10 +26,12 @@ def dashboard():
                 )
                 categoria.notificado = True
         else:
+            # Se a quantidade estiver acima do mínimo e a categoria estiver marcada como notificada, redefinir o flag
             if categoria.notificado:
                 categoria.notificado = False
 
-    db.session.commit()  # Comita todas as alterações de uma vez
+    # Persiste todas as alterações no banco de dados
+    db.session.commit()
 
     categorias_com_produtos = [
         {

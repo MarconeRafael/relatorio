@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import Produto, Categoria, Unidade, db, CATEGORIAS_PREDEFINIDAS
+from models import Produto, Unidade, db, Categoria, CATEGORIAS_PREDEFINIDAS
 
 # Cria o Blueprint para Produtos
 produtos_bp = Blueprint('produtos', __name__)
@@ -39,9 +39,15 @@ def novo_produto():
         unidade_id = request.form.get('unidade_id')
         categoria_id = request.form.get('categoria_id')
 
-        # Validação simples: nome, preco, quantidade e unidade são obrigatórios
-        if not nome or not preco or not quantidade or not unidade_id:
+        # Validação simples: todos os campos obrigatórios devem ser preenchidos
+        if not nome or not preco or not quantidade or not unidade_id or not categoria_id:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
+            return render_template('novo_produto.html', form_data=request.form, categorias=categorias, unidades=unidades)
+
+        # Validação para garantir que a categoria selecionada é uma das pré-definidas
+        seeded_category_ids = [str(c.id) for c in categorias]
+        if categoria_id not in seeded_category_ids:
+            flash('Selecione uma categoria válida.', 'danger')
             return render_template('novo_produto.html', form_data=request.form, categorias=categorias, unidades=unidades)
 
         try:
@@ -78,8 +84,14 @@ def editar_produto(id):
         unidade_id = request.form.get('unidade_id')
         categoria_id = request.form.get('categoria_id')
 
-        if not nome or not preco or not quantidade or not unidade_id:
+        if not nome or not preco or not quantidade or not unidade_id or not categoria_id:
             flash('Todos os campos obrigatórios devem ser preenchidos.', 'danger')
+            return render_template('editar_produto.html', produto=produto, form_data=request.form, categorias=categorias, unidades=unidades)
+
+        # Validação para garantir que a categoria selecionada é uma das pré-definidas
+        seeded_category_ids = [str(c.id) for c in categorias]
+        if categoria_id not in seeded_category_ids:
+            flash('Selecione uma categoria válida.', 'danger')
             return render_template('editar_produto.html', produto=produto, form_data=request.form, categorias=categorias, unidades=unidades)
 
         try:

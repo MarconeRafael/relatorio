@@ -59,9 +59,9 @@
                      placeholder="Quantidade que chegou"
                      value="{{ form_data.quantidade if form_data and form_data.quantidade else '' }}">
             </div>
+            <!-- Dropdown de Categoria -->
             <div class="mb-3">
               <label for="categoria_id" class="form-label">Categoria</label>
-              <!-- Seleção da Categoria de Produto -->
               <select class="form-select" id="categoria_id" name="categoria_id" required>
                 <option value="">Selecione uma categoria</option>
                 {% for categoria in categorias %}
