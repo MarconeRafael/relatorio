@@ -1,122 +1,142 @@
-
 # Relatórios Automáticos com OpenAI, Transcrição de Áudio e Gestão de Almoxarifado
 
-Este projeto utiliza a API da OpenAI para transcrever áudios e gerar relatórios organizados automaticamente. 
-Inclui uma interface web para upload de áudios, visualização de gráficos, geração de relatórios em PDF e gestão de almoxarifado.
+Este projeto utiliza a API da OpenAI para transcrever áudios e gerar relatórios automaticamente, além de oferecer uma interface web para upload de áudios, visualização de gráficos, geração de relatórios em PDF e gestão de almoxarifado.
+
+---
 
 ## 📂 Estrutura do Diretório
 
+A estrutura atual do projeto é a seguinte:
+
 ```
-relatorios/
+relatorio/
 ├── app.py
 ├── config.py
-├── main.py
-├── transcrever_audio.py
-├── gerar_pdf.py
-├── eficiencia_material.py
-├── eficiencia_tempo.py
-├── graficos_material.py
-├── graficos_tempo.py
-├── inicio.py
-├── fim.py
+├── eficiencia_material.py  #Não está sendo usado
+├── eficiencia_tempo.py     #Não está sendo usado
+├── fim.py                  #Não está sendo usado
+├── gerar_pdf.py            #Não está sendo usado
+├── graficos_material.py    #Não está sendo usado
+├── graficos_tempo.py       #Não está sendo usado
+├── inicio.py               #Não está sendo usado
+├── instance/
 ├── keys.py
 ├── LICENSE
-├── README.md
+├── main.py                 #Não está sendo usado
+├── migrations/
 ├── models.py
+├── README.md
+├── requirements.txt
+├── routes/
+│   ├── dashboard.py
+│   ├── graficos.py
+│   ├── processar_formulario.py
+│   ├── produtos.py
+│   ├── unidades.py
+│   └── usuarios.py
 ├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── chart.js
 │   ├── recorder.js
 │   └── style.css
-├── data/
-│   ├── audios/
-│   ├── graficos/
-│   └── relatorios/
-├── routes/
-│   ├── __init__.py
-│   ├── produtos.py
-│   ├── movimentacoes.py
-│   ├── fornecedores.py
-│   └── usuarios.py
 ├── templates/
 │   ├── base.html
+│   ├── cadastro.html
+│   ├── cadastrar_unidade.html
 │   ├── dashboard.html
-│   ├── index.html
+│   ├── editar_produto.html
+│   ├── editar_unidade.html
 │   ├── graficos.html
-│   ├── relatorios.html
-│   └── forms/
-├── venv/
-└── __pycache__/
-           # Documentação do projeto
+│   ├── graficos2.html      #Não está sendo usado
+│   ├── gravar.html
+│   ├── index.html
+│   ├── login.html
+│   ├── novo_produto.html
+│   ├── listar_unidades.html
+│   ├── produtos.html
+│   ├── relatorios.html     #Não está sendo usado
+│   └── tabela.html
+├── data/                   #Não está sendo usado
+│   ├── audios/            
+│   ├── graficos/
+│   └── relatorios/
+└── venv/
 ```
+
+---
 
 ## 🚀 Como Usar
 
-### 1️⃣ **Configuração Inicial**
-```bash
-# Clonar repositório e instalar dependências
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# venv\Scripts\activate  # Windows
+### 1️⃣ Configuração Inicial
 
-pip install -r requirements.txt  # Instalar Flask, OpenAI e outras dependências
+Clone o repositório e instale as dependências:
+
+```
+git clone <URL-do-repositório>
+cd relatorio
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 2️⃣ **Configurar Chave da OpenAI**
-Edite `keys.py` e insira sua chave:
-```python
+### 2️⃣ Configurar a Chave da OpenAI
+
+Edite o arquivo `keys.py` e insira sua chave da OpenAI:
+
+```
 chave_openai = "sua-chave-aqui"
 ```
 
-### 3️⃣ **Executar Aplicação Web**
-```bash
+### 3️⃣ Gerenciamento de Banco de Dados com Flask-Migrate
+
+1. Inicializar as migrações:
+```
+flask db init
+```
+2. Gerar uma nova migração:
+```
+flask db migrate -m "Atualiza modelos"
+```
+3. Aplicar a migração:
+```
+flask db upgrade
+```
+
+### 4️⃣ Executar a Aplicação Web
+
+```
 python app.py
+ou
+flask run
 ```
-Acesse http://localhost:5000 no navegador para:
-- Gravar/upload de áudio diretamente na interface
-- Visualizar relatórios processados
-- Acessar gráficos de eficiência
-- Download de relatórios em PDF
-- Gerenciar o almoxarifado (produtos, movimentações, fornecedores e usuários)
+Acesse [http://localhost:5000](http://localhost:5000).
 
-### 4️⃣ **Fluxo de Processamento**
-1. Áudio é salvo em `data/audios/`
-2. Transcrição via OpenAI é armazenada temporariamente
-3. Relatório estruturado é gerado e salvo em `data/relatorios/`
-4. Gráficos são atualizados em `data/graficos/`
+---
 
-### 5️⃣ **Geração de Relatórios (CLI)**
-Para processamento manual via terminal:
-```python
-from transcrever_audio import transcrever_audio
-from inicio import organiza
+## 📊 Funcionalidades
 
-texto = transcrever_audio("data/audios/seu_audio.ogg")
-relatorio = organiza(texto)
-print(relatorio)
-```
+- Transcrição de Áudio com OpenAI
+- Geração de Relatórios em PDF
+- Gestão de Almoxarifado
+- Dashboard Interativo com Gráficos
 
-### 6️⃣ **Geração de Gráficos (CLI)**
-```python
-from graficos_material import gerar_graficos as graf_materiais
-from graficos_tempo import gerar_graficos as graf_tempo
+---
 
-graf_materiais()
-graf_tempo()
-```
+## 💻 Uso via Interface Web
 
-## 📊 Saída Esperada
-- Relatórios diários em CSV: `data/relatorios/relatorio_YYYY-MM-DD.csv`
-- Gráficos atualizados: 
-  - `data/graficos/eficiencia_material.png`
-  - `data/graficos/eficiencia_tempo.png`
-- PDF consolidado: `data/relatorios/relatorio_eficiencia.pdf`
+- Gravação e Upload de Áudio
+- Visualização de Relatórios
+- Dashboard com Gráficos Interativos
 
-## 🌐 Recursos da Interface Web
-- Gravação de áudio direto no navegador
-- Upload de arquivos de áudio (formato OGG)
-- Visualização de histórico de relatórios
-- Dashboard interativo com métricas de eficiência
-- Download de relatórios em formato PDF
-- Controle e gestão de almoxarifado
+---
+
+## 🛠 Atualizações
+
+O arquivo `processar_formulario.py` redireciona para `/dashboard` após salvar os dados.
+
+
 
 ## 📜 Licença
 Distribuído sob licença Apache 2.0. Veja [LICENSE](LICENSE) para detalhes.
