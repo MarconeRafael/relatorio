@@ -7,7 +7,8 @@ from routes.produtos import produtos_bp
 from routes.usuarios import usuarios_bp
 from routes.unidades import unidades_bp  # Importação do Blueprint de unidades
 from routes.dashboard import dashboard_bp  # Importação do Blueprint do dashboard
-from routes.processar_formulario import relatorio_bp  # Importação do Blueprint de relatórios
+from routes.processar_formulario import relatorio_bp  # Blueprint de processamento de formulário de relatório
+from routes.graficos import graficos_bp  # Novo blueprint para os gráficos
 
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -45,7 +46,8 @@ app.register_blueprint(produtos_bp, url_prefix="/produtos")
 app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
 app.register_blueprint(unidades_bp, url_prefix="/unidades")
 app.register_blueprint(dashboard_bp, url_prefix="/")
-app.register_blueprint(relatorio_bp, url_prefix="/relatorio_form")  # Blueprint de processamento de formulário de relatório
+app.register_blueprint(relatorio_bp, url_prefix="/relatorio_form")
+app.register_blueprint(graficos_bp, url_prefix="/api")  # Registro do blueprint de gráficos
 
 # Rotas principais
 @app.route("/")
@@ -91,7 +93,7 @@ def concluir():
 # Tela de Relatórios
 @app.route("/relatorios")
 def relatorios():
-    pdf_path = f"data/relatorios/relatorio_completo.pdf"
+    pdf_path = "data/relatorios/relatorio_completo.pdf"
     relatorio_pdf = "relatorio_completo_2025-03-05.pdf"
     relatorio_eficiencia_csv = "relatorio_eficiencia_material.csv"
     relatorio_eficiencia_pdf = "relatorio_eficiencia.pdf"
@@ -101,7 +103,7 @@ def relatorios():
                            relatorio_eficiencia_csv=relatorio_eficiencia_csv,
                            relatorio_eficiencia_pdf=relatorio_eficiencia_pdf)
 
-# Tela de Gráficos
+# Tela de Gráficos - Renderiza o template atualizado que utiliza o novo script static/js/chart.js
 @app.route("/graficos")
 def graficos():
     return render_template("graficos.html")

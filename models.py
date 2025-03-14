@@ -29,7 +29,7 @@ class Categoria(db.Model):
     quantidade_minima = db.Column(db.Float, nullable=False)
     # Estoque atual da categoria (inicialmente a soma dos produtos, depois ajustado conforme gastos)
     quantidade_total = db.Column(db.Float, default=0)
-    # Flag para controle de notificação
+    # Flag para controle de notificação (ex: se já foi disparada uma notificação de estoque baixo)
     notificado = db.Column(db.Boolean, default=False)
 
     produtos = db.relationship('Produto', backref='categoria', lazy=True)
@@ -37,7 +37,8 @@ class Categoria(db.Model):
     def atualizar_quantidade_total(self):
         """
         Atualiza 'quantidade_total' com a soma das quantidades atuais dos produtos associados.
-        Esse método pode ser usado para reinicializar o estoque a partir dos produtos cadastrados.
+        Esse método pode ser utilizado para reinicializar o estoque a partir dos produtos cadastrados,
+        antes de aplicar ajustes como materiais gastos.
         """
         self.quantidade_total = sum(produto.quantidade_atual for produto in self.produtos)
 
@@ -77,13 +78,58 @@ class Relatorio(db.Model):
         """
         Percorre o dicionário 'materiais_gastos' e reduz a 'quantidade_total'
         da categoria correspondente com base no valor gasto.
-        As chaves do dicionário devem corresponder aos nomes das categorias.
+        
+        Atenção: Este método deve ser utilizado com cautela, garantindo que a redução
+        seja aplicada apenas uma vez para cada relatório, para evitar subtrair repetidamente.
+        
+        As chaves do dicionário devem corresponder exatamente aos nomes das categorias.
         """
         if self.materiais_gastos:
             for categoria_nome, gasto in self.materiais_gastos.items():
                 categoria = Categoria.query.filter_by(nome=categoria_nome).first()
                 if categoria:
                     categoria.quantidade_total -= gasto
+
+    def calcular_duracao(self):
+        """
+        Calcula a duração da tarefa em minutos.
+        Converte os horários de início e fim (objetos do tipo time) para minutos e retorna a diferença.
+        Caso a diferença seja negativa (tarefa que ultrapassa a meia-noite), ajusta adicionando 24 horas em minutos.
+        """
+        inicio = self.horario_inicio
+        fim = self.horario_fim
+        inicio_minutos = inicio.hour * 60 + inicio.minute
+        fim_minutos = fim.hour * 60 + fim.minute
+        duracao = fim_minutos - inicio_minutos
+        if duracao < 0:
+            duracao += 24 * 60
+        return duracao
+
+    def tempo_por_m2(self):
+        """
+        Calcula o tempo gasto por metro quadrado.
+        Divide a duração da tarefa (em minutos) pelos metros quadrados trabalhados.
+        Retorna None se 'metros_quadrados' for zero para evitar divisão por zero.
+        """
+        if self.metros_quadrados > 0:
+            return self.calcular_duracao() / self.metros_quadrados
+        else:
+            return None
+
+    def consumo_por_m2(self):
+        """
+        Calcula o consumo real por metro quadrado para cada material.
+        Para cada material registrado em 'materiais_gastos', divide a quantidade gasta pelos metros quadrados.
+        Retorna um dicionário com os materiais e o consumo por m².
+        Se 'metros_quadrados' for zero ou 'materiais_gastos' for None, retorna um dicionário vazio.
+        """
+        if self.metros_quadrados > 0 and self.materiais_gastos:
+            consumo = {}
+            for material, gasto in self.materiais_gastos.items():
+                consumo[material] = gasto / self.metros_quadrados
+            return consumo
+        else:
+            return {}
 
 # Dicionário com as categorias pré-definidas e seus valores mínimos
 CATEGORIAS_PREDEFINIDAS = {
