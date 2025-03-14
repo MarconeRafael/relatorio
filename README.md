@@ -118,7 +118,7 @@ Acesse [http://localhost:5000](http://localhost:5000).
 ## 📊 Funcionalidades
 
 - Transcrição de Áudio com OpenAI
-- Geração de Relatórios em PDF
+- Geração de Relatórios de produção
 - Gestão de Almoxarifado
 - Dashboard Interativo com Gráficos
 
