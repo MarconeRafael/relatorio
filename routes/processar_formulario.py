@@ -1,24 +1,33 @@
 from flask import Blueprint, request, redirect, url_for, flash, render_template
 from datetime import datetime
-from models import db, Relatorio, Categoria, Produto
+from models import db, Relatorio, Categoria, Produto, CATEGORIAS_PREDEFINIDAS
 
 relatorio_bp = Blueprint('relatorio_bp', __name__)
 
 def normalizar_nome_material(nome):
     """
-    Normaliza o nome do material para os valores fixos:
-      - "Filme"
-      - "Cola Mel"
-      - "Cola Una"
-      - "Cola Kisafix"
-      - "Pó para Pintura"
-      - "EPS"
-      - "Aço"
-    Se o nome não corresponder a nenhum desses, retorna None.
+    Normaliza o nome do material para que corresponda a uma das chaves definidas em CATEGORIAS_PREDEFINIDAS:
+      - Filmes: "Filme branco", "Filme amadeirado", "Filme preto" ou "Filme ultralight"
+      - Colas: "Cola Mel", "Cola Una" ou "Cola Kisafix"
+      - Pós para Pintura: "Pó para Pintura branco", "Pó para Pintura preto fosco", 
+        "Pó para Pintura terracota", "Pó para Pintura preto brilhoso", "Pó para Pintura cinza", 
+        "Pó para Pintura amarelo" ou "Pó para Pintura vermelho"
+      - Outros: "EPS", "Aço", "Parafuso autobrocante", "Parafuso costura", "cuminheeira",
+        "alcool", "estilete" e "luvas"
+    Retorna None se não corresponder a nenhum destes.
     """
     nome_lower = nome.lower()
     if "filme" in nome_lower:
-        return "Filme"
+        if "branco" in nome_lower:
+            return "Filme branco"
+        elif "amadeirado" in nome_lower:
+            return "Filme amadeirado"
+        elif "preto" in nome_lower:
+            return "Filme preto"
+        elif "ultralight" in nome_lower:
+            return "Filme ultralight"
+        else:
+            return "Filme branco"  # valor padrão para filmes
     elif "cola mel" in nome_lower:
         return "Cola Mel"
     elif "cola una" in nome_lower:
@@ -26,20 +35,47 @@ def normalizar_nome_material(nome):
     elif "cola kisafix" in nome_lower:
         return "Cola Kisafix"
     elif "pó" in nome_lower or "pintura" in nome_lower:
-        return "Pó para Pintura"
+        if "branco" in nome_lower:
+            return "Pó para Pintura branco"
+        elif "preto" in nome_lower and "fosco" in nome_lower:
+            return "Pó para Pintura preto fosco"
+        elif "terracota" in nome_lower:
+            return "Pó para Pintura terracota"
+        elif "preto" in nome_lower and "brilhoso" in nome_lower:
+            return "Pó para Pintura preto brilhoso"
+        elif "cinza" in nome_lower:
+            return "Pó para Pintura cinza"
+        elif "amarelo" in nome_lower:
+            return "Pó para Pintura amarelo"
+        elif "vermelho" in nome_lower:
+            return "Pó para Pintura vermelho"
+        else:
+            return "Pó para Pintura branco"  # valor padrão para pintura
     elif "eps" in nome_lower:
         return "EPS"
     elif "aço" in nome_lower:
         return "Aço"
+    elif "parafuso autobrocante" in nome_lower:
+        return "Parafuso autobrocante"
+    elif "parafuso costura" in nome_lower:
+        return "Parafuso costura"
+    elif "cuminheeira" in nome_lower:
+        return "cuminheeira"
+    elif "alcool" in nome_lower:
+        return "alcool"
+    elif "estilete" in nome_lower:
+        return "estilete"
+    elif "luvas" in nome_lower:
+        return "luvas"
     else:
         return None
 
-# Mapeamento de tarefas para o nome da categoria fixa correspondente
+# Mapeamento de tarefas para a categoria padrão, de acordo com os nomes atualizados
 task_to_category = {
-    "Colagem de Filme (Normal)": "Filme",
-    "Pintura Eletrostática": "Pó para Pintura",
+    "Colagem de Filme (Normal)": "Filme branco",
+    "Pintura Eletrostática": "Pó para Pintura branco",
     "Colagem de Cola Mel": "Cola Mel"
-    # Adicione outras tarefas conforme necessário.
+    # Outras tarefas podem ser mapeadas conforme necessário.
 }
 
 @relatorio_bp.route('/', methods=['POST'])
@@ -76,7 +112,6 @@ def processar_formulario():
         if key.startswith("material_"):
             material_original = key.replace("material_", "")
             material_normalizado = normalizar_nome_material(material_original)
-            # Se não reconhecer o material, ignora-o
             if material_normalizado is None:
                 continue
             try:
@@ -89,24 +124,23 @@ def processar_formulario():
                 if material_normalizado not in materiais:
                     materiais[material_normalizado] = 0.0
 
-    # Usa o mapeamento de tarefa para determinar a categoria fixa correspondente.
-    # Se a tarefa não estiver mapeada, utiliza o próprio valor da tarefa.
+    # Determina a categoria fixa com base na tarefa
     categoria_nome = task_to_category.get(tarefa, tarefa)
     categoria = Categoria.query.filter_by(nome=categoria_nome).first()
-    
+
     if categoria:
         for material_nome, gasto in materiais.items():
-            # Busca o produto associado à categoria fixa cujo nome corresponda ao material normalizado
+            # Busca o produto associado à categoria cujo nome corresponda ao material normalizado
             produto = Produto.query.filter_by(nome=material_nome, categoria=categoria).first()
             if produto:
                 produto.quantidade_atual -= gasto * metros_quadrados
                 if produto.quantidade_atual < 0:
                     produto.quantidade_atual = 0
-        # Atualiza o campo quantidade_total da categoria com base na soma dos produtos
-        categoria.quantidade_total = categoria.contar_produtos()
+        # Atualiza a quantidade total da categoria com base nos produtos associados
+        categoria.atualizar_quantidade_total()
         db.session.commit()
 
-    # Cria a instância do relatório e salva no banco de dados
+    # Cria e salva o relatório
     novo_relatorio = Relatorio(
         nome_cliente=nome_cliente,
         horario_inicio=horario_inicio,
@@ -119,7 +153,6 @@ def processar_formulario():
     db.session.commit()
 
     flash("Relatório salvo com sucesso!", "success")
-    # Redireciona para a rota /dashboard após concluir o processamento
     return redirect(url_for('dashboard'))
 
 @relatorio_bp.route('/tabela')

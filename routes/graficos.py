@@ -5,23 +5,67 @@ import statistics
 
 graficos_bp = Blueprint('graficos_bp', __name__)
 
-# Dicionário de valores esperados para cada tarefa
 expected_values = {
-    "Colagem de Filme (Normal)": {
-        "tempo_por_m2": 1.5,  # minutos por m² esperado
-        "consumo": {"Filme": 1.0, "Cola Una": 50}
+    "Pintura": {
+        "tempo_por_m2": 2.5,  # minutos por m² esperado para pintura
+        "consumo": {
+            "Pó para Pintura": {
+                "expected_total": 120,  # a soma dos consumos dos tipos selecionados deve totalizar 120
+                "variants": {
+                    "Pó para Pintura branco": 120,
+                    "Pó para Pintura preto fosco": 120,
+                    "Pó para Pintura terracota": 60,
+                    "Pó para Pintura preto brilhoso": 120,
+                    "Pó para Pintura cinza": 120,
+                    "Pó para Pintura amarelo": 120,
+                    "Pó para Pintura vermelho": 120
+                }
+            }
+        }
     },
-    "Corte de Isopor": {
-        "tempo_por_m2": 2.0,
-        "consumo": {}
+    "Colagem de filme": {
+        "tempo_por_m2": 1.5,
+        "consumo": {
+            "Filme": 1.0,
+            "Estilete": 15,
+            "Álcool": 5,
+            "Cola": {
+                "expected_max": 60,  # valor máximo entre as opções (Cola Una ou Cola Kisafix)
+                "variants": {
+                    "Cola Una": 60,
+                    "Cola Kisafix": 60
+                }
+            }
+        }
     },
-    "Pintura Eletrostática": {
-        "tempo_por_m2": 2.5,
-        "consumo": {"Pó para Pintura": 120}
-    },
-    "Colagem de Cola Mel": {
+    "Colagem de eps": {
         "tempo_por_m2": 1.2,
-        "consumo": {"Cola Mel": 30}
+        "consumo": {
+            "Cola Mel": 200,
+            "EPS": 1000,
+            "Aço": 1,
+            "Luvas": 100
+        }
+    },
+    "Acabamento": {
+        "tempo_por_m2": 1.0,
+        "consumo": {
+            "EPS": 1000,
+            "Estilete": 15
+        }
+    },
+    "Envio": {
+        "tempo_por_m2": 0,  # não se aplica o consumo por área nesta tarefa
+        "consumo": {
+            "Parafuso": {
+                "expected_max": 1000,  # valor máximo entre as opções disponíveis
+                "variants": {
+                    "Parafuso autobrocante": 1000,
+                    "Parafuso costura": 50,
+                    "cuminheeira": 1
+                }
+            }
+        }
     }
 }
 
@@ -30,7 +74,6 @@ def chart_data():
     # Consultar todos os relatórios
     relatorios = Relatorio.query.all()
 
-    # Dados individuais de cada relatório com indicadores reais e esperados
     tarefas_individuais = []
     for rel in relatorios:
         # Obtém os valores esperados para a tarefa, se houver; caso contrário, usa valores padrão
@@ -42,13 +85,24 @@ def chart_data():
         if exp.get("tempo_por_m2") is not None and rel.metros_quadrados:
             expected_tempo_total = exp.get("tempo_por_m2") * rel.metros_quadrados
         
-        # Para o consumo, o real é o total consumido já registrado (em materiais_gastos)
+        # O consumo real é o total registrado em materiais_gastos
         actual_consumo_total = rel.materiais_gastos
+        
         # Calcular o consumo total esperado: para cada material esperado, multiplique pelo número de metros quadrados
         expected_consumo_total = {}
         for material, valor in exp.get("consumo", {}).items():
             if rel.metros_quadrados:
-                expected_consumo_total[material] = valor * rel.metros_quadrados
+                if isinstance(valor, dict):
+                    # Se existir "expected_total", utiliza-o; caso contrário, tenta "expected_max"
+                    if "expected_total" in valor:
+                        numeric_val = valor["expected_total"]
+                    elif "expected_max" in valor:
+                        numeric_val = valor["expected_max"]
+                    else:
+                        numeric_val = 0
+                else:
+                    numeric_val = valor
+                expected_consumo_total[material] = numeric_val * rel.metros_quadrados
         
         tarefas_individuais.append({
             "id": rel.id,
@@ -62,7 +116,6 @@ def chart_data():
             "actual_consumo_total": actual_consumo_total,
             "expected_consumo_total": expected_consumo_total,
             "criado_em": rel.criado_em.strftime("%Y-%m-%d"),
-            # Mantém também os valores por m² para referência
             "expected_tempo_por_m2": exp.get("tempo_por_m2"),
             "expected_consumo_por_m2": exp.get("consumo")
         })

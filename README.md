@@ -95,6 +95,63 @@ chave_openai = "sua-chave-aqui"
 ```
 flask db init
 ```
+
+
+
+Adicionando Categorias Pré-Definidas via Flask Shell
+Este documento descreve o processo para inserir os registros de categorias na tabela categorias do banco de dados utilizando o Flask Shell. Essas categorias são definidas no dicionário CATEGORIAS_PREDEFINIDAS no arquivo models.py.
+
+Pré-requisitos
+Ambiente Virtual Ativado: Certifique-se de que o ambiente virtual do projeto está ativo.
+Banco de Dados Configurado: Verifique se o banco de dados está corretamente configurado (por exemplo, utilizando SQLite ou outra URI definida em app.py).
+Migrações Aplicadas: Caso utilize Flask-Migrate, confirme que as migrações foram executadas e a tabela categorias existe.
+Passos para Inserir as Categorias
+1. Abra o Flask Shell
+Na raiz do projeto, execute o comando:
+
+bash
+Copiar
+Editar
+flask shell
+Isso abrirá o shell interativo do Flask, onde você pode interagir com o seu aplicativo.
+
+2. Importe os Modelos e a Instância do Banco
+No shell, importe a classe Categoria, a instância db e o dicionário CATEGORIAS_PREDEFINIDAS:
+
+python
+Copiar
+Editar
+from models import Categoria, db, CATEGORIAS_PREDEFINIDAS
+3. Adicione as Categorias ao Banco de Dados
+Utilize uma list comprehension para iterar sobre o dicionário e inserir cada categoria. Digite o seguinte comando:
+
+python
+Copiar
+Editar
+[db.session.add(Categoria(nome=nome, quantidade_minima=quantidade)) for nome, quantidade in CATEGORIAS_PREDEFINIDAS.items()]
+Este comando adiciona cada nova categoria à sessão do banco de dados.
+
+4. Confirme a Inserção com Commit
+Após adicionar as categorias à sessão, é necessário confirmar (commit) as mudanças:
+
+python
+Copiar
+Editar
+db.session.commit()
+5. Verifique se as Categorias Foram Inseridas
+Para confirmar que as categorias foram adicionadas, execute:
+
+python
+Copiar
+Editar
+categorias = Categoria.query.all()
+print(categorias)
+O resultado deverá mostrar uma lista com os objetos da classe Categoria, por exemplo:
+
+php-template
+Copiar
+Editar
+[<Categoria Filme branco>, <Categoria Filme amadeirado>, <Categoria Filme preto>, ... ]
 2. Gerar uma nova migração:
 ```
 flask db migrate -m "Atualiza modelos"

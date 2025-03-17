@@ -36,10 +36,11 @@
       <label for="tarefa" class="form-label fs-5"><strong>🛠️ Tarefa</strong></label>
       <select id="tarefa" name="tarefa" class="form-select">
         <option value="" disabled selected>Selecione uma tarefa</option>
-        <option value="Colagem de Filme (Normal)">Colagem de Filme (Normal)</option>
-        <option value="Corte de Isopor">Corte de Isopor</option>
-        <option value="Pintura Eletrostática">Pintura Eletrostática</option>
-        <option value="Colagem de Cola Mel">Colagem de Cola Mel</option>
+        <option value="Pintura">Pintura</option>
+        <option value="Colagem de filme">Colagem de filme</option>
+        <option value="Colagem de eps">Colagem de eps</option>
+        <option value="Acabamento">Acabamento</option>
+        <option value="Envio">Envio</option>
       </select>
       <div class="form-text">Após selecionar, os campos de material gasto serão atualizados automaticamente.</div>
     </div>
@@ -152,11 +153,39 @@
   document.getElementById('tarefa').addEventListener('change', function() {
     const tarefa = this.value;
     const materialData = {
-      "Colagem de Filme (Normal)": {"Filme": 1.03, "Cola Una": 60},
-      "Corte de Isopor": {},
-      "Pintura Eletrostática": {"Pó para Pintura": 140},
-      "Colagem de Cola Mel": {"Cola Mel": 40}
+      "Pintura": {
+        "Pó para Pintura branco": 150,
+        "Pó para Pintura preto fosco": 50,
+        "Pó para Pintura terracota": 50,
+        "Pó para Pintura preto brilhoso": 25,
+        "Pó para Pintura cinza": 10,
+        "Pó para Pintura amarelo": 10,
+        "Pó para Pintura vermelho": 10
+      },
+      "Colagem de filme": {
+        "Filme": 1.03,
+        "Estilete": 15,
+        "Álcool": 5,
+        "Cola Una": 140,
+        "Cola Kisafix": 160
+      },
+      "Colagem de eps": {
+        "Cola Mel": 200,
+        "EPS": 1000,
+        "Aço": 1,
+        "Luvas": 100
+      },
+      "Acabamento": {
+        "EPS": 1000,
+        "Estilete": 15
+      },
+      "Envio": {
+        "Parafuso autobrocante": 1000,
+        "Parafuso costura": 50,
+        "cuminheeira": 1
+      }
     }[tarefa];
+
     const materialContainer = document.getElementById('materialContainer');
     materialContainer.innerHTML = ""; // Limpa campos anteriores
 

@@ -46,26 +46,26 @@
               <select class="form-select" id="unidade_id" name="unidade_id" required>
                 <option value="">Selecione uma unidade</option>
                 {% for unidade in unidades %}
-                  <option value="{{ unidade.id }}" {% if form_data.unidade_id and form_data.unidade_id == unidade.id %}selected{% endif %}>
+                  <option value="{{ unidade.id }}" {% if form_data.unidade_id and form_data.unidade_id == unidade.id|string %}selected{% endif %}>
                     {{ unidade.nome }}
                   </option>
                 {% endfor %}
               </select>
             </div>
-            <!-- Campo de Quantidade não obrigatório -->
+            <!-- Campo de Quantidade (não obrigatório) -->
             <div class="mb-3">
               <label for="quantidade" class="form-label">Quantidade</label>
               <input type="number" step="any" class="form-control" id="quantidade" name="quantidade"
                      placeholder="Quantidade que chegou"
                      value="{{ form_data.quantidade if form_data and form_data.quantidade else '' }}">
             </div>
-            <!-- Dropdown de Categoria -->
+            <!-- Dropdown de Categoria (usando as categorias pré-definidas) -->
             <div class="mb-3">
               <label for="categoria_id" class="form-label">Categoria</label>
               <select class="form-select" id="categoria_id" name="categoria_id" required>
                 <option value="">Selecione uma categoria</option>
                 {% for categoria in categorias %}
-                  <option value="{{ categoria.id }}" {% if form_data.categoria_id and form_data.categoria_id == categoria.id %}selected{% endif %}>
+                  <option value="{{ categoria.id }}" {% if form_data.categoria_id and form_data.categoria_id == categoria.id|string %}selected{% endif %}>
                     {{ categoria.nome }}
                   </option>
                 {% endfor %}
